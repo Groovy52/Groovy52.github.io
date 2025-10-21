@@ -2,14 +2,17 @@
 layout: default
 title: Paper Reviews
 ---
+
 <h1>Paper Reviews</h1>
+<p style="opacity:.8;">Short, opinionated reviews of papers I read. Key ideas, methods, and relevance to my LiDAR/robotics work.</p>
+
 <ul>
   {% assign posts = site.posts | where_exp: "p", "p.url contains '/paper/'" %}
   {% for post in posts %}
-    <li>
+    <li style="margin:8px 0;">
       <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
       <span style="opacity:.6;"> — {{ post.date | date: "%Y-%m-%d" }}</span>
+      {% if post.tags %}<span style="opacity:.6;"> • {{ post.tags | join: ", " }}</span>{% endif %}
     </li>
   {% endfor %}
 </ul>
-
