@@ -1,3 +1,7 @@
+---
+layout: default
+title: Paper Reviews
+---
 
 # Paper Reviews
 
