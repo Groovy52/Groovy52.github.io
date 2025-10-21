@@ -1,13 +1,13 @@
----
-layout: default
-title: Paper Reviews
----
 
 # Paper Reviews
 
-This section collects summaries and insights from papers I’ve read.  
-Each **date** links to my written review on GitHub, and each **title** links to the original paper.
+Browse my research paper reviews below.
 
-| Date | Title | Venue | Author |
-|------|--------|--------|--------|
-| [2023-03-01](https://github.com/Groovy52/Groovy52.github.io/blob/main/paper/2023-03-01-PointNet.md) | [PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation](https://arxiv.org/pdf/1612.00593) | *CVPR (2017)* | Goeun Kim |
+<ul>
+  {% for post in site.posts %}
+    <li style="margin:6px 0;">
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      <span style="opacity:.6;"> — {{ post.date | date: "%Y-%m-%d" }}</span>
+    </li>
+  {% endfor %}
+</ul>
