@@ -1,3 +1,4 @@
 title: "Goeun Kim"
-permalink: /paper/:year/:month/:day/:title.html
+description: "AI & Robotics Research Blog"
 markdown: kramdown
+theme: minima 
