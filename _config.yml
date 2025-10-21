@@ -2,3 +2,4 @@ title: "Goeun Kim"
 description: "AI & Robotics Research Blog"
 markdown: kramdown
 theme: minima 
+permalink: /:categories/:year/:month/:day/:title.html
