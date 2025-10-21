@@ -3,16 +3,11 @@ layout: default
 title: Paper Reviews
 ---
 
-<h1>Paper Reviews</h1>
-<p style="opacity:.8;">Short, opinionated reviews of papers I read. Key ideas, methods, and relevance to my LiDAR/robotics work.</p>
+# Paper Reviews
 
-<ul>
-  {% assign posts = site.posts | where_exp: "p", "p.url contains '/paper/'" %}
-  {% for post in posts %}
-    <li style="margin:8px 0;">
-      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-      <span style="opacity:.6;"> — {{ post.date | date: "%Y-%m-%d" }}</span>
-      {% if post.tags %}<span style="opacity:.6;"> • {{ post.tags | join: ", " }}</span>{% endif %}
-    </li>
-  {% endfor %}
-</ul>
+This section collects summaries and insights from papers I’ve read.  
+Each **date** links to my written review on GitHub, and each **title** links to the original paper.
+
+| Date | Title | Venue | Author |
+|------|--------|--------|--------|
+| [2023-03-01](https://github.com/Groovy52/Groovy52.github.io/blob/main/paper/2023-03-01-PointNet.md) | [PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation](https://arxiv.org/pdf/1612.00593) | *CVPR (2017)* | Goeun Kim |
