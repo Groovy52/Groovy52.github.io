@@ -1,5 +1,8 @@
 title: "Goeun Kim"
 description: "AI & Robotics Research Blog"
 markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
 theme: minima 
 permalink: /:categories/:year/:month/:day/:title.html
