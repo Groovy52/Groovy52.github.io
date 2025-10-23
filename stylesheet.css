@@ -140,3 +140,60 @@ span.highlight {
     display: inline-block;
     border-radius: 10px;
 }
+
+/* ---------- Publication layout customization ---------- */
+
+tr.pub > td {
+  vertical-align: top;
+}
+
+/* 이미지 높이 고정 (텍스트와 균형 맞추기) */
+tr.pub .thumb img {
+  width: 160px;
+  height: 120px; /* 필요 시 140px 정도로 조정 가능 */
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+/* 오른쪽 콘텐츠 상단 여백 정리 */
+tr.pub .content .papertitle,
+tr.pub .content p,
+tr.pub .content em,
+tr.pub .content span,
+tr.pub .content strong {
+  margin-top: 0;
+}
+
+/* 제목 링크 스타일 */
+a.papertitle {
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;
+}
+
+a.papertitle:hover {
+  color: #1772d0;
+}
+
+/* paper | code | project page 링크 */
+.pub-links {
+  display: inline-flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.pub-links a {
+  color: #1772d0;
+  text-decoration: none;
+}
+
+.pub-links a:hover {
+  color: #f09228;
+}
+
+/* 요약문 스타일 */
+.pub-desc {
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
