@@ -27,162 +27,142 @@ The paper is published in:
 
 # 1. Introduction
 
-<div style="text-align:center;">
-Accurate 3D object detection from point clouds is crucial for autonomous systems, including autonomous driving, drone navigation, and automated agriculture. In clinical settings, autonomous mobile robots have recently been introduced to mitigate workforce shortages and support healthcare delivery by performing tasks such as medication transport and patient guidance. However, performing **reliable 3D object detection in crowded and cluttered hospital environments presents significant challenges due to the following issues in Problem Statment.**
+Accurate 3D object detection from point clouds is crucial for autonomous systems, including autonomous driving, drone navigation, and automated agriculture. In clinical settings, autonomous mobile robots have recently been introduced to mitigate workforce shortages and support healthcare delivery by performing tasks such as medication transport and patient guidance. However, performing **reliable 3D object detection in crowded and cluttered hospital environments** presents significant challenges due to the following issues.
+
+### **Unique Characteristics of Hospital Environments**
+
+1. Hospitals serve a large population of elderly or mobility-impaired patients who often require assistance.  
+   As a result, **caregivers or clinical staff frequently accompany patients in close proximity**, leading to **frequent person–wheelchair or person–bed overlapping** in point cloud representations.
+
+2. Hospital rooms and corridors are **narrow and densely populated**, while medical equipment, beds, and carts move continuously throughout the environment.  
+   This results in **severe occlusion** and **partial observations** that significantly degrade object visibility.
+
+3. Hospitals enforce stringent **privacy regulations**, making the use of RGB-based detection infeasible.  
+   Consequently, robust **LiDAR-only, depth-based perception** is required.
+
+4. Indoor Flash LiDAR sensors often suffer from **noise and low spatial resolution**,  
+   which produces **blurred object boundaries** and makes **instance separation** particularly difficult.
+
+Given these characteristics, it is evident that **existing autonomous-driving datasets such as KITTI and Waymo differ substantially from real hospital environments**, both in object categories and spatial interaction patterns.  
+Applying conventional models or datasets directly to hospitals therefore leads to **significant performance degradation**.
+
+To address these limitations, we constructed a **hospital-specific LiDAR dataset comprising 10,985 scenes** and developed **SALD-Net**, a self-attention–integrated 3D object detection framework tailored to crowded and cluttered clinical environments.
+
+## Problem Statement
+
+Hospital environments present several unique challenges for LiDAR-based 3D object detection that differ significantly from conventional outdoor autonomous-driving domains.
+
+### **1. Domain Gap: Lack of Hospital-Specific Datasets**
+
+<p align="center">
+  <img src="/publications/sald-net/images/kitti_classes.png" width="70%">
+</p>
+<p align="center"><em>Figure 1. Comparison of object classes between KITTI and hospital environments.</em></p>
+
+Public datasets such as KITTI and Waymo do not contain hospital-relevant objects such as beds, wheelchairs, medical staff, or mobility-assisted patient scenarios.  
+As a result, existing models experience severe **domain shift** when applied to hospital scenes.
 
 ---
 
-# 2. Problem Statement
+### **2. Flash LiDAR Noise and Low Resolution**
 
-<div style="text-align:center;">
-  <img src="./figures/saldnet_challenges.png" width="80%" alt="Hospital detection challenges placeholder">
-  <p style="color:gray;">*Occlusion, overlapping, and sparse point clouds in hospital scenes (placeholder).* </p>
-</div>
+<p align="center">
+  <img src="/publications/sald-net/images/lidar_noise.png" width="70%">
+</p>
+<p align="center"><em>Figure 2. Noise, sparsity, and low-resolution challenges of indoor Flash LiDAR.</em></p>
 
-Hospital perception is challenging due to:
-
-### ▸ 2.1 Limited hospital-domain datasets  
-Existing datasets do not include wheelchairs, beds, stretchers, or caregiver–patient interactions.
-
-### ▸ 2.2 Frequent occlusion & overlapping  
-A caregiver positioned behind a wheelchair patient creates **blended point clouds** that are hard to separate.
-
-### ▸ 2.3 Privacy-preserving requirements  
-RGB images cannot be used.  
-Only spatial information from LiDAR is allowed.
-
-### ▸ 2.4 Low-resolution & noisy indoor LiDAR  
-Flash LiDAR produces sparse, noisy data.  
-Boundaries between adjacent objects are often ambiguous.
-
-These motivated us to design a dataset and detection model specifically optimized for hospital dynamics.
+Indoor Flash LiDAR produces frequent outliers, blurred boundaries, and sparse point distributions—causing unstable bounding box estimation.
 
 ---
 
-# 3. Hospital LiDAR Dataset (10,985 scenes)
+### **3. Class Imbalance**
 
-<div style="text-align:center;">
-  <img src="./figures/saldnet_dataset.png" width="80%" alt="Dataset visualization placeholder">
-  <p style="color:gray;">*Example BEV/3D point cloud scenes from the constructed dataset (placeholder).* </p>
-</div>
+<p align="center">
+  <img src="/publications/sald-net/images/class_imbalance.png" width="70%">
+</p>
+<p align="center"><em>Figure 3. Example of class imbalance in hospital datasets.</em></p>
 
-To address the lack of clinical-domain data, we collected **10,985 scenes** using **19 Flash LiDAR sensors** across four hospital zones.
-
-Dataset characteristics:
-- Captures **wheelchair–patient–caregiver** interactions
-- 5 FPS operation  
-- Train/Val/Test = **6 : 2 : 2** with **patient-level split**  
-- **No RGB** data recorded  
-- Dense clutter and natural movement patterns
-
-This dataset reflects real-world hospital complexity and serves as the basis for SALD-Net.
+Hospitals show highly skewed category frequencies, with staff and patients appearing far more often than wheelchairs, beds, or robots.
 
 ---
 
-# 4. Method
+### **4. Occlusion and Overlap in Dynamic Hospital Scenes**
 
-<div style="text-align:center;">
-  <img src="./figures/saldnet_architecture.png" width="85%" alt="SALD-Net architecture placeholder">
-  <p style="color:gray;">*Overall architecture of SALD-Net (placeholder).* </p>
-</div>
+<p align="center">
+  <img src="/publications/sald-net/images/occlusion_overlap.png" width="75%">
+</p>
+<p align="center"><em>Figure 4. Occlusion, overlap, and sparsity examples from hospital LiDAR data.</em></p>
 
-SALD-Net is a two-stage 3D detection framework based on OpenPCDet and enhanced with self-attention.
+Crowded corridors, staff assisting patients, and narrow clinical spaces make **overlapping** and **partial occlusion** unavoidable, making instance separation extremely difficult.
 
----
+## Methods
 
-## 4.1 Backbone Attention Module (BAM)
+### **1. Hospital-Specific LiDAR Dataset Construction**
 
-PointNet++ captures local geometric features but struggles in overlapping scenarios.  
-**BAM injects self-attention into the backbone**, enabling the model to:
+<p align="center">
+  <img src="/publications/sald-net/images/dataset_map.png" width="65%">
+</p>
+<p align="center"><em>Figure 5. Sensor deployment zones for data collection.</em></p>
 
-- Capture **global dependencies**
-- Separate blended clusters (e.g., caregiver + wheelchair)
-- Improve robustness in cluttered regions
-
----
-
-## 4.2 Unified Regional & Grid (URG) RoI Pooling
-
-To better handle diverse object scales and shapes in hospitals:
-
-- URG pooling combines **grid-level** and **regional** feature extraction.
-- Ensures stable feature representation under occlusion.
+We deployed 19 Flash LiDAR sensors across four hospital zones…
 
 ---
 
-## 4.3 RoI Attention Module (RAM)
+### **2. Preprocessing Pipeline for Indoor Flash LiDAR**
 
-RAM applies learnable self-attention on RoI features:
+<p align="center">
+  <img src="/publications/sald-net/images/preprocessing_steps.png" width="80%">
+</p>
+<p align="center"><em>Figure 6. Preprocessing pipeline: downsampling → RANSAC → SOR.</em></p>
 
-- Understands context around partially occluded objects  
-- Improves box refinement accuracy  
-- Helps differentiate human–equipment pairs
-
----
-
-## 4.4 Augmentation via GT-Sampling
-
-To mitigate class imbalance and overlapping conditions:
-
-- Rare classes (beds, wheelchairs) are oversampled  
-- Synthetic overlapping scenarios are generated  
-- Greatly enhances generalization under dense hospital interactions
+A three-stage preprocessing pipeline was applied…
 
 ---
 
-# 5. Preprocessing Pipeline
+### **3. GT Sampling for Class Imbalance Mitigation**
 
-To handle indoor LiDAR noise:
+<p align="center">
+  <img src="/publications/sald-net/images/gt_sampling.png" width="80%">
+</p>
+<p align="center"><em>Figure 7. Illustration of GT sampling for balancing rare classes.</em></p>
 
-- **Voxel downsampling**  
-- **RANSAC floor-plane removal**  
-- **Statistical outlier filtering**  
-
-Together, these steps stabilize point cloud quality before inference.
-
----
-
-# 6. Experiments
-
-| Model        | 3D mAP | BEV mAP |
-|--------------|--------|---------|
-| PointPillars | 66.66  | 71.15   |
-| SECOND       | 72.58  | 75.89   |
-| Part-A2      | 78.68  | 83.53   |
-| **SALD-Net** | **89.08** | **90.03** |
-
-<div style="text-align:center;">
-  <img src="./figures/saldnet_results.png" width="80%" alt="Qualitative results placeholder">
-  <p style="color:gray;">*Qualitative results showing improved detection in overlapping scenes (placeholder).* </p>
-</div>
-
-**Key improvements:**  
-- +16.5%p 3D mAP over SECOND  
-- Robust detection under caregiver–patient overlapping  
-- Stable refinement under partial occlusion
+GT instances from a database were inserted…
 
 ---
 
-# 7. Discussion
+### **4. Backbone-integrated Attention Module (BAM)**
 
-SALD-Net demonstrates that self-attention combined with domain-specific augmentation is highly effective in indoor hospital environments.  
-The method is:
+<p align="center">
+  <img src="/publications/sald-net/images/BAM_architecture.png" width="80%">
+</p>
+<p align="center"><em>Figure 8. Architecture of the proposed BAM module.</em></p>
 
-- **Privacy-preserving**
-- **Robust to occlusion**
-- **Deployable in real hospital robots**
-
-The approach provides a promising direction for safe, reliable indoor service robotics in healthcare.
+BAM enhances global geometric reasoning…
 
 ---
 
+### **5. RoI Feature-based Attention Module (RAM)**
 
-# Citation
+<p align="center">
+  <img src="/publications/sald-net/images/RAM_architecture.png" width="80%">
+</p>
+<p align="center"><em>Figure 9. Architecture of the proposed RAM module.</em></p>
 
-```bibtex
-@article{saldnet2025kim,
-  title={SALD-Net: Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment},
-  author={Kim, Goeun and Yang, Su and Han, Ji Yong and Kim, Jun-Min and Yi, Won-Jin},
-  journal={Signal, Image and Video Processing},
-  year={2025}
-}
+RAM refines RoIs by integrating positional and semantic relationships…
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
