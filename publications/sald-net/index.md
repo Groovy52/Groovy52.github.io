@@ -1,3 +1,12 @@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: "Inter", sans-serif;
+  line-height: 1.6;
+}
+</style>
+
 ---
 layout: post
 title: "SALD-Net: Self-Attention-integrated LiDAR-based 3D Object Detection in Crowded Hospital Environments"
@@ -19,24 +28,11 @@ The paper is published in:
 # 1. Introduction
 
 <div style="text-align:center;">
-  <img src="./figures/saldnet_cover.png" width="80%" alt="SALD-Net overview (placeholder)">
-  <p style="color:gray;">*Conceptual overview of SALD-Net in a congested hospital corridor (placeholder).* </p>
-</div>
-
-Hospitals represent one of the most difficult indoor environments for 3D perception:
-
-- Patients requiring mobility assistance are often accompanied by caregivers.
-- Wheelchairs, beds, stretchers, and medical carts constantly move through narrow corridors.
-- People and equipment frequently overlap or occlude one another.
-- RGB cameras cannot be used due to strict privacy regulations.
-
-Existing public datasets such as KITTI or Waymo contain outdoor scenes and lack the object categories and motion patterns present in clinical environments. Applying such models directly leads to **severe domain shift** and poor detection performance.
-
-SALD-Net is designed to resolve these challenges using a **hospital-specific LiDAR dataset** and **global–local self-attention mechanisms**.
+Accurate 3D object detection from point clouds is crucial for autonomous systems, including autonomous driving, drone navigation, and automated agriculture. In clinical settings, autonomous mobile robots have recently been introduced to mitigate workforce shortages and support healthcare delivery by performing tasks such as medication transport and patient guidance. However, performing **reliable 3D object detection in crowded and cluttered hospital environments presents significant challenges due to the following issues in Problem Statment.**
 
 ---
 
-# 2. Motivation
+# 2. Problem Statement
 
 <div style="text-align:center;">
   <img src="./figures/saldnet_challenges.png" width="80%" alt="Hospital detection challenges placeholder">
