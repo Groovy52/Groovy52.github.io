@@ -189,9 +189,9 @@ To handle overlapping and occlusion, two graph-based self-attention modules (BAM
 <p align="center">
   <img src="/publications/sald-net/images/BAM.png" width="80%">
 </p>
-<p align="center"><em>Figure 8. Architecture of the proposed BAM module.</em></p>
+<p align="center"><em>Figure 7. Architecture of the proposed BAM module.</em></p>
 
-Representative point groups are constructed as:
+Representative point groups are defined as:
 
 𝑋
 =
@@ -230,22 +230,6 @@ Each node feature produces query, key, and value embeddings:
 𝐾
 𝑥
 𝑗
-,
-𝑉
-𝑗
-=
-𝑊
-𝑉
-𝑥
-𝑗
-,
-𝑄
-𝑖
-=
-𝑊
-𝑄
-𝑥
-𝑖
 K
 j
 	​
@@ -258,7 +242,14 @@ x
 j
 	​
 
-,V
+𝑉
+𝑗
+=
+𝑊
+𝑉
+𝑥
+𝑗
+V
 j
 	​
 
@@ -270,7 +261,14 @@ x
 j
 	​
 
-,Q
+𝑄
+𝑖
+=
+𝑊
+𝑄
+𝑥
+𝑖
+Q
 i
 	​
 
@@ -282,7 +280,9 @@ x
 i
 	​
 
-Attention weight
+
+The attention weight between nodes is:
+
 𝑊
 𝑖
 𝑗
@@ -308,7 +308,9 @@ j
 	​
 
 )
-Interaction term
+
+The interaction term is:
+
 𝑟
 𝑖
 𝑗
@@ -331,7 +333,9 @@ ij
 j
 	​
 
-Global context feature
+
+The global context-aware feature is:
+
 𝑎
 𝑖
 =
@@ -358,7 +362,7 @@ ij
 	​
 
 
-The final feature forwarded to propagation is:
+The final propagated feature is:
 
 [
 𝑥
@@ -378,10 +382,6 @@ i
 	​
 
 ]
-
-Foreground–background imbalance is addressed using focal loss.
-
-
 ### **URG (unified regional and grid) RoI Pooling head**
 
 ### Regional RoI pooling
