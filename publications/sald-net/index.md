@@ -111,7 +111,7 @@ As a result, existing models experience severe **domain shift** when applied to 
 
 ## 2. Flash LiDAR Noise and Low Resolution
 
-Indoor Flash LiDAR produces frequent outliers, blurred boundaries, and sparse point distributions—causing unstable bounding box estimation. Sparsity of point is illustrated in Figure 2.
+Indoor Flash LiDAR produces frequent outliers, blurred boundaries, and sparse point distributions—causing unstable bounding box estimation. Sparsity of point is illustrated in **Figure 2**.
 
 ## 3. Class Imbalance
 
@@ -146,10 +146,14 @@ We deployed 19 Flash LiDAR sensors across four hospital zones.
 </p>
 <p align="center"><em>Figure 4. Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class.</em></p>
 
-A total of 10,985 point cloud scenes were collected at 5 fps using 19 fixed Flash LiDAR sensors (NSL-1110AV, 320×240 resolution, 12 m depth range). To reduce noise and computational complexity, a three-stage preprocessing pipeline was applied using Open3D:
+A total of 10,985 point cloud scenes were collected at 5 fps using 19 fixed Flash LiDAR sensors. To reduce noise and computational complexity, a three-stage preprocessing pipeline was applied using Open3D:
+
 (1) Voxel downsampling with a voxel size of 0.25 to adjust point density.
+
 (2) RANSAC plane removal (max distance 0.2 m, 3-point model, 500 iterations) to separate foreground objects from walls/floors.
+
 (3) Statistical Outlier Removal (SOR) with 20 neighbors and 1.5 std threshold.
+
 Finally, all point clouds were axis-normalized to (0,0,0) for consistent training.
 
 ## 3. GT Sampling for Class Imbalance Mitigation
@@ -159,26 +163,27 @@ Finally, all point clouds were axis-normalized to (0,0,0) for consistent trainin
 </p>
 <p align="center"><em>Figure 5. Illustration of GT sampling process and number of classes. Blue points indicate original GTs, and red points are GT annotations from the database for robot (R), person (P), bed (B), and wheelchair (W). The first column shows the original samples, the second column shows the GT database, the third column shows the augmentation process (a, b), and the final column shows the augmented samples. Background points are shown in white.</em></p>
 
-The dataset was divided into training/validation/test sets at a 6:2:2 ratio. Severe class imbalance was observed among the four classes (person, robot, bed, wheelchair), with the person class dominating. To mitigate this, a GT sampling strategy was applied: annotated GT instances of minority classes were extracted from a database and inserted into other scenes while preventing spatial overlap. This increased instance counts from 4,081 → 6,336 (robot), 4,434 → 6,689 (bed), and 711 → 5,937 (wheelchair), while the person class remained unchanged to preserve realistic hospital distributions.
+The dataset was divided into training/validation/test sets at a 6:2:2 ratio. Severe class imbalance was observed among the four classes (person, robot, bed, wheelchair), with the person class dominating. To mitigate this, a GT sampling strategy was applied: annotated GT instances of minority classes were extracted from a database and inserted into other scenes while preventing spatial overlap. 
 
 During augmentation, bounding box ranges of each scene were computed, and new GT instances were placed according to the scene’s geometry (e.g., positive x- or y-direction) to avoid collisions. Bounding boxes were updated with each addition. After augmentation, all point clouds were re-normalized to (0,0,0) to maintain consistent alignment across samples. This GT sampling process produced a more balanced yet realistic dataset for robust network training.
 
 ## 4. Graph-based Self-Attention
 SALD-Net adopts a two-stage 3D detection architecture:
 
-(1) initial 3D box proposal via PointNet++,
-(2) refinement via URG RoI pooling + RAM.
+(1) initial 3D box proposal via PointNet++ with BAM
+
+(2) refinement via URG RoI pooling + RAM
 
 To handle overlapping and occlusion, two graph-based self-attention modules (BAM, RAM) were introduced.
 
 <p align="center">
-  <img src="/publications/sald-net/images/network_architecture" width="80%">
+  <img src="/publications/sald-net/images/network_architecture.png" width="80%">
 </p>
 <p align="center"><em>Figure 6. Architecture of the proposed SALD-Net.</em></p>
 
 {% raw %}
 
-### Backbone-integrated Attention Module (BAM)
+### 4.1. Backbone-integrated Attention Module (BAM)
 
 <p align="center">
   <img src="/publications/sald-net/images/BAM.png" width="80%">
@@ -221,417 +226,108 @@ This feature is aggregated via multi-head attention, concatenated with the local
 
 {% endraw %}
 
-### **URG (unified regional and grid) RoI Pooling head**
+### 4.2. URG (unified regional and grid) RoI Pooling head
 
-### Regional RoI pooling
+{% raw %}
 
-A slightly expanded RoI box is defined as:
+### 4.2.1. Regional RoI pooling
 
-𝑏
-𝑖
-′
-=
-(
-𝑥
-𝑖
-,
- 
-𝑦
-𝑖
-,
- 
-𝑧
-𝑖
-,
- 
-ℎ
-𝑖
-+
-𝜂
-,
- 
-𝑤
-𝑖
-+
-𝜂
-,
- 
-𝑙
-𝑖
-+
-𝜂
-,
- 
-𝜃
-𝑖
-)
-b
-i
-′
-	​
+Each 3D box proposal is defined as  
+$$
+b_i = (x_i, y_i, z_i,\, h_i, w_i, l_i, \theta_i),
+$$  
+where $(x_i, y_i, z_i)$ denote its center coordinates, $(h_i, w_i, l_i)$ are the dimensions, and $\theta_i$ is the orientation.  
+To include boundary context, the box is slightly expanded as  
+$$
+b'_i = (x_i, y_i, z_i,\, h_i + \eta,\, w_i + \eta,\, l_i + \eta,\, \theta_i),
+$$  
+with a fixed expansion factor $\eta = 0.2$.
 
-=(x
-i
-	​
+### 4.2.2. Hierarchical grid RoI pooling
 
-,y
-i
-	​
+To address point sparsity and capture multi-scale geometry, a five-level 3D grid is constructed inside each expanded RoI $b'_i$.  
+The grid sizes and radii are defined as:  
 
-,z
-i
-	​
+$$
+G = [6, 4, 4, 4, 1], \qquad
+R = [0.2, 0.4, 0.6, 1.2, 1.6].
+$$
 
-,h
-i
-	​
+Points near each grid vertex are grouped at multiple pyramid levels, enabling extraction of both interior and exterior structure, which improves recognition under occlusion.
 
-+η,w
-i
-	​
-
-+η,l
-i
-	​
-
-+η,θ
-i
-	​
-
-)
-
-with expansion factor:
-
-𝜂
-=
-0.2
-η=0.2
-
-### Hierarchical grid pooling
-
-Five pyramid levels are constructed:
-
-𝐺
-=
-[
-6
-,
- 
-4
-,
- 
-4
-,
- 
-4
-,
- 
-1
-]
-G=[6,4,4,4,1]
-
-with corresponding radii:
-
-𝑅
-=
-[
-0.2
-,
- 
-0.4
-,
- 
-0.6
-,
- 
-1.2
-,
- 
-1.6
-]
-R=[0.2,0.4,0.6,1.2,1.6]
-
-These grids capture multi-scale local and contextual geometric features.
-
-### RoI Feature-based Attention Module (RAM)
+### 4.2.3. RoI Feature-based Attention Module (RAM)
 
 <p align="center">
   <img src="/publications/sald-net/images/RAM.png" width="80%">
 </p>
 <p align="center"><em>Figure 9. Architecture of the proposed RAM module.</em></p>
 
-RAM refines RoI features using positional coordinates and semantic features.
+The RAM module refines the pooled features by integrating spatial and semantic relationships.  
+It takes as input:
 
-Position embedding
-𝑝
-𝑒
-=
-FC
-(
-𝐹
-𝑥
-𝑦
-𝑧
-)
-pe=FC(F
-xyz
-	​
+$$
+F_{xyz} \in \mathbb{R}^{N \times 3}, \qquad
+F_f \in \mathbb{R}^{N \times C},
+$$
 
-)
-Semantic key and value
-𝑘
-𝑒
-=
-FC
-(
-𝐹
-𝑓
-)
-,
-𝑣
-𝑒
-=
-MLP
-(
-𝐹
-𝑓
-)
-k
-e
-	​
+where $N$ is the number of neighboring points.
 
-=FC(F
-f
-	​
+Position embedding:
 
-),v
-e
-	​
+$$
+p_e = \text{FC}(F_{xyz})
+$$
 
-=MLP(F
-f
-	​
+Semantic key and value projections:
 
-)
-Learnable coefficients
+$$
+k_e = \text{FC}(F_f), \qquad
+v_e = \text{MLP}(F_f)
+$$
 
-Four learnable coefficients are generated using:
+Four learnable coefficients modulate spatial–semantic interactions:
 
-𝜎
-(
-Linear
-(
-Mean
-(
-⋅
-)
-)
-)
-σ(Linear(Mean(⋅)))
+$$
+v_{\text{coef}},\; q_{\text{coef}},\; k_{\text{coef}},\; qk_{\text{coef}}
+$$
 
-They are:
+Updated embeddings:
 
-𝑣
-coef
-,
-𝑞
-coef
-,
-𝑘
-coef
-,
-𝑞
-𝑘
-coef
-v
-coef
-	​
+$$
+v'_e = v_e + v_{\text{coef}} \cdot p_e
+$$
 
-,q
-coef
-	​
+$$
+p'_e = q_{\text{coef}} \cdot p_e
+$$
 
-,k
-coef
-	​
+$$
+k'_e = k_{\text{coef}} \cdot k_e
+$$
 
-,qk
-coef
-	​
+$$
+pk'_e = qk_{\text{coef}} \cdot (p_e \odot k_e)
+$$
 
-Updated embeddings
-𝑣
-𝑒
-′
-=
-𝑣
-𝑒
-+
-𝑣
-coef
-⋅
-𝑝
-𝑒
-v
-e
-′
-	​
+Attention map:
 
-=v
-e
-	​
+$$
+A = p'_e + k'_e + pk'_e
+$$
 
-+v
-coef
-	​
+Final aggregated feature:
 
-⋅pe
-𝑝
-𝑒
-′
-=
-𝑞
-coef
-⋅
-𝑝
-𝑒
-p
-e
-′
-	​
+$$
+F_{\text{agg}}
+= \sum_{i=1}^{N}
+\text{Softmax}(A_i)\, v'_e(i)
+$$
 
-=q
-coef
-	​
+This mechanism enhances 3D bounding box refinement by emphasizing critical spatial and semantic cues, especially under partial occlusion.
 
-⋅pe
-𝑘
-𝑒
-′
-=
-𝑘
-coef
-⋅
-𝑘
-𝑒
-k
-e
-′
-	​
+{% endraw %}
 
-=k
-coef
-	​
-
-⋅k
-e
-	​
-
-𝑝
-𝑘
-𝑒
-′
-=
-𝑞
-𝑘
-coef
-⋅
-(
-𝑝
-𝑒
-⊙
-𝑘
-𝑒
-)
-pk
-e
-′
-	​
-
-=qk
-coef
-	​
-
-⋅(pe⊙k
-e
-	​
-
-)
-Attention map
-𝐴
-=
-𝑝
-𝑒
-′
-+
-𝑘
-𝑒
-′
-+
-𝑝
-𝑘
-𝑒
-′
-A=p
-e
-′
-	​
-
-+k
-e
-′
-	​
-
-+pk
-e
-′
-	​
-
-Final aggregated feature
-𝐹
-agg
-=
-∑
-𝑖
-=
-1
-𝑁
-Softmax
-(
-𝐴
-𝑖
-)
- 
-𝑣
-𝑒
-′
-(
-𝑖
-)
-F
-agg
-	​
-
-=
-i=1
-∑
-N
-	​
-
-Softmax(A
-i
-	​
-
-)v
-e
-′
-	​
-
-(i)
-
-RAM improves box refinement by modeling spatial–semantic interactions under severe occlusion.
-
-# **4. Result**
+# 4. Result
 
 <p align="center">
   <img src="/publications/sald-net/images/result_table.png" width="80%">
