@@ -99,7 +99,7 @@ Applying conventional models or datasets directly to hospitals therefore leads t
 To address these limitations, we constructed a **hospital-specific LiDAR dataset comprising 10,985 scenes** and developed **SALD-Net**, a self-attention–integrated 3D object detection framework tailored to crowded and cluttered clinical environments.
 
 # 2. Problem Statement
-## **1. Domain Gap: Lack of Hospital-Specific Datasets**
+## 1. Domain Gap: Lack of Hospital-Specific Datasets
 
 <p align="center">
   <img src="/publications/sald-net/images/kitti.png" width="85%">
@@ -107,34 +107,30 @@ To address these limitations, we constructed a **hospital-specific LiDAR dataset
 <p align="center"><em>Figure 1. object classes and scene structure of KITTI</em></p>
 
 Public datasets such as KITTI and Waymo do not contain hospital-relevant objects such as beds, wheelchairs, medical staff, or mobility-assisted patient scenarios.  
-As a result, existing models experience severe **domain shift** when applied to hospital scenes.
+As a result, existing models experience severe **domain shift** when applied to **hospital scenes (Figure 3)**.
 
----
-
-## **2. Flash LiDAR Noise and Low Resolution**
+## 2. Flash LiDAR Noise and Low Resolution
 
 Indoor Flash LiDAR produces frequent outliers, blurred boundaries, and sparse point distributions—causing unstable bounding box estimation. Sparsity of point is illustrated in Figure 2.
 
----
-
-## **3. Class Imbalance**
+## 3. Class Imbalance
 
 Hospitals show highly skewed category frequencies, with staff and patients appearing far more often than wheelchairs, beds, or robots.
 
----
 
-### **4. Occlusion and Overlap in Dynamic Hospital Scenes**
+### 4. Occlusion and Overlap in Dynamic Hospital Scenes
 
 <p align="center">
   <img src="/publications/sald-net/images/lidar_challenges.png" width="65%">
 </p>
-<p align="center"><em>Figure 2. Occlusion, overlap, and sparsity examples from hospital LiDAR data.</em></p>
+<p align="center"><em>Figure 2. Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads
+to incomplete 3D representations. </em></p>
 
 **Crowded corridors** (Indoor structure of hospital as illustrated in Figure 1), staff assisting patients, and narrow clinical spaces make **overlapping** and **partial occlusion** unavoidable, making instance separation extremely difficult.
 
 # 3. Methods
 
-## **1. Hospital-Specific LiDAR Dataset Construction**
+## 1. Hospital-Specific LiDAR Dataset Construction
 
 <p align="center">
   <img src="/publications/sald-net/images/complex_hospital.png" width="65%">
@@ -143,9 +139,7 @@ Hospitals show highly skewed category frequencies, with staff and patients appea
 
 We deployed 19 Flash LiDAR sensors across four hospital zones.
 
----
-
-## **2. Preprocessing Pipeline for Indoor Flash LiDAR**
+## 2. Preprocessing Pipeline for Indoor Flash LiDAR
 
 <p align="center">
   <img src="/publications/sald-net/images/preprocessing_steps.png" width="80%">
@@ -158,9 +152,7 @@ A total of 10,985 point cloud scenes were collected at 5 fps using 19 fixed Flas
 (3) Statistical Outlier Removal (SOR) with 20 neighbors and 1.5 std threshold.
 Finally, all point clouds were axis-normalized to (0,0,0) for consistent training.
 
----
-
-## **3. GT Sampling for Class Imbalance Mitigation**
+## 3. GT Sampling for Class Imbalance Mitigation
 
 <p align="center">
   <img src="/publications/sald-net/images/gt_sampling_result.png" width="80%">
@@ -171,9 +163,7 @@ The dataset was divided into training/validation/test sets at a 6:2:2 ratio. Sev
 
 During augmentation, bounding box ranges of each scene were computed, and new GT instances were placed according to the scene’s geometry (e.g., positive x- or y-direction) to avoid collisions. Bounding boxes were updated with each addition. After augmentation, all point clouds were re-normalized to (0,0,0) to maintain consistent alignment across samples. This GT sampling process produced a more balanced yet realistic dataset for robust network training.
 
----
-
-## **4. Graph-based Self-Attention**
+## 4. Graph-based Self-Attention
 SALD-Net adopts a two-stage 3D detection architecture:
 (1) initial 3D box proposal via PointNet++,
 (2) refinement via URG RoI pooling + RAM.
@@ -184,14 +174,14 @@ To handle overlapping and occlusion, two graph-based self-attention modules (BAM
 </p>
 <p align="center"><em>Figure 6. Architecture of the proposed SALD-Net.</em></p>
 
-### **Backbone-integrated Attention Module (BAM)**
+### Backbone-integrated Attention Module (BAM)
 
 <p align="center">
   <img src="/publications/sald-net/images/BAM.png" width="80%">
 </p>
 <p align="center"><em>Figure 7. Architecture of the proposed BAM module.</em></p>
 
-Representative point groups are defined as:
+The Backbone-integrated self-attention mechanism (BAM) is applied after the third and fourth set abstraction layers for computational efficiency. Given an input point cloud, representative points are sampled and grouped into node features
 
 𝑋
 =
@@ -221,67 +211,35 @@ n
 
 }
 
-Each node feature produces query, key, and value embeddings:
+using farthest point sampling and grouping [16]. Each node feature $x_{i}$ represents a local point-wise grouped feature, and $n$ is the number of groups $(i = 1, \ldots, n)$. To capture global dependencies, all node pairs $(x_{i}, x_{j})$ are connected via an edge set
 
-𝐾
-𝑗
+𝐸
 =
-𝑊
-𝐾
-𝑥
-𝑗
-K
-j
-	​
-
-=W
-K
-	​
-
-x
-j
-	​
-
-𝑉
-𝑗
-=
-𝑊
-𝑉
-𝑥
-𝑗
-V
-j
-	​
-
-=W
-V
-	​
-
-x
-j
-	​
-
-𝑄
+{
+𝑟
 𝑖
-=
-𝑊
-𝑄
-𝑥
+𝑗
+∣
 𝑖
-Q
-i
+,
+𝑗
+=
+1
+,
+…
+,
+𝑛
+}
+,
+E={r
+ij
 	​
 
-=W
-Q
-	​
+∣i,j=1,…,n},
 
-x
-i
-	​
+where each edge $r_{ij}$ represents the interaction between the $i^{\text{th}}$ and $j^{\text{th}}$ nodes. These interaction terms are computed using a self-attention mechanism [17].
 
-
-The attention weight between nodes is:
+In BAM, each node feature $x_{j}$ is projected via linear layers into a key vector $K_{j}$ and a value vector $V_{j}$, while a query vector $Q_{i}$ is derived from $x_{i}$. The attention weight between the $i^{\text{th}}$ and $j^{\text{th}}$ point nodes is computed as:
 
 𝑊
 𝑖
@@ -294,6 +252,7 @@ softmax
 ⋅
 𝐾
 𝑗
+⊤
 )
 W
 ij
@@ -305,11 +264,12 @@ i
 
 ⋅K
 j
+⊤
 	​
 
 )
 
-The interaction term is:
+The interaction term is obtained by:
 
 𝑟
 𝑖
@@ -334,7 +294,7 @@ j
 	​
 
 
-The global context-aware feature is:
+A global context-aware feature is computed as:
 
 𝑎
 𝑖
@@ -362,26 +322,8 @@ ij
 	​
 
 
-The final propagated feature is:
+This feature is aggregated via multi-head attention, concatenated with the local node feature $x_{i}$, and upsampled through feature propagation. To address class imbalance between foreground and background regions, focal loss [18] is applied. The architecture of BAM is illustrated in Figure 3.
 
-[
-𝑥
-𝑖
- 
-∥
- 
-𝑎
-𝑖
-]
-[x
-i
-	​
-
-∥a
-i
-	​
-
-]
 ### **URG (unified regional and grid) RoI Pooling head**
 
 ### Regional RoI pooling
