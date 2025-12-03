@@ -118,7 +118,7 @@ Indoor Flash LiDAR produces frequent outliers, blurred boundaries, and sparse po
 Hospitals show highly skewed category frequencies, with staff and patients appearing far more often than wheelchairs, beds, or robots.
 
 
-### 4. Occlusion and Overlap in Dynamic Hospital Scenes
+## 4. Occlusion and Overlap in Dynamic Hospital Scenes
 
 <p align="center">
   <img src="/publications/sald-net/images/lidar_challenges.png" width="65%">
@@ -126,14 +126,14 @@ Hospitals show highly skewed category frequencies, with staff and patients appea
 <p align="center"><em>Figure 2. Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads
 to incomplete 3D representations. </em></p>
 
-**Crowded corridors** (Indoor structure of hospital as illustrated in Figure 1), staff assisting patients, and narrow clinical spaces make **overlapping** and **partial occlusion** unavoidable, making instance separation extremely difficult.
+**Crowded corridors** (Indoor structure of hospital as illustrated in **Figure 3**), staff assisting patients, and narrow clinical spaces make **overlapping** and **partial occlusion** unavoidable, making instance separation extremely difficult.
 
 # 3. Methods
 
 ## 1. Hospital-Specific LiDAR Dataset Construction
 
 <p align="center">
-  <img src="/publications/sald-net/images/complex_hospital.png" width="65%">
+  <img src="/publications/sald-net/images/complex_hospital.png" width="85%">
 </p>
 <p align="center"><em>Figure 3. Sensor deployment zones for data collection.</em></p>
 
@@ -155,7 +155,7 @@ Finally, all point clouds were axis-normalized to (0,0,0) for consistent trainin
 ## 3. GT Sampling for Class Imbalance Mitigation
 
 <p align="center">
-  <img src="/publications/sald-net/images/gt_sampling_result.png" width="80%">
+  <img src="/publications/sald-net/images/gt_sampling_result.png" width="90%">
 </p>
 <p align="center"><em>Figure 5. Illustration of GT sampling process and number of classes. Blue points indicate original GTs, and red points are GT annotations from the database for robot (R), person (P), bed (B), and wheelchair (W). The first column shows the original samples, the second column shows the GT database, the third column shows the augmentation process (a, b), and the final column shows the augmented samples. Background points are shown in white.</em></p>
 
@@ -165,14 +165,18 @@ During augmentation, bounding box ranges of each scene were computed, and new GT
 
 ## 4. Graph-based Self-Attention
 SALD-Net adopts a two-stage 3D detection architecture:
+
 (1) initial 3D box proposal via PointNet++,
 (2) refinement via URG RoI pooling + RAM.
+
 To handle overlapping and occlusion, two graph-based self-attention modules (BAM, RAM) were introduced.
 
 <p align="center">
   <img src="/publications/sald-net/images/network_architecture" width="80%">
 </p>
 <p align="center"><em>Figure 6. Architecture of the proposed SALD-Net.</em></p>
+
+{% raw %}
 
 ### Backbone-integrated Attention Module (BAM)
 
@@ -181,148 +185,41 @@ To handle overlapping and occlusion, two graph-based self-attention modules (BAM
 </p>
 <p align="center"><em>Figure 7. Architecture of the proposed BAM module.</em></p>
 
-The Backbone-integrated self-attention mechanism (BAM) is applied after the third and fourth set abstraction layers for computational efficiency. Given an input point cloud, representative points are sampled and grouped into node features
+The Backbone-integrated self-attention mechanism (BAM) is applied after the third and fourth set abstraction layers for computational efficiency. Given an input point cloud, representative points are sampled and grouped into node features:
 
-𝑋
-=
-{
-𝑥
-1
-,
-𝑥
-2
-,
-…
-,
-𝑥
-𝑛
-}
-X={x
-1
-	​
+$$
+X = \{ x_{1}, x_{2}, \ldots, x_{n} \}
+$$
 
-,x
-2
-	​
+Each node feature $x_{i}$ represents a local point-wise grouped feature, and $n$ is the number of groups $(i = 1, \ldots, n)$. To capture global dependencies, all node pairs $(x_{i}, x_{j})$ are connected via an edge set:
 
-,…,x
-n
-	​
+$$
+E = \{ r_{ij} \mid i, j = 1, \ldots, n \}
+$$
 
-}
+where each edge $r_{ij}$ represents the interaction between the $i^{\text{th}}$ and $j^{\text{th}}$ nodes. These interaction terms are computed using a self-attention mechanism.
 
-using farthest point sampling and grouping [16]. Each node feature $x_{i}$ represents a local point-wise grouped feature, and $n$ is the number of groups $(i = 1, \ldots, n)$. To capture global dependencies, all node pairs $(x_{i}, x_{j})$ are connected via an edge set
+In BAM, each node feature $x_{j}$ is projected into a key vector $K_{j}$ and a value vector $V_{j}$, while a query vector $Q_{i}$ is derived from $x_{i}$. The attention weight is defined as:
 
-𝐸
-=
-{
-𝑟
-𝑖
-𝑗
-∣
-𝑖
-,
-𝑗
-=
-1
-,
-…
-,
-𝑛
-}
-,
-E={r
-ij
-	​
+$$
+W_{ij} = \text{softmax}(Q_{i} \cdot K_{j}^{\top})
+$$
 
-∣i,j=1,…,n},
+The interaction term is:
 
-where each edge $r_{ij}$ represents the interaction between the $i^{\text{th}}$ and $j^{\text{th}}$ nodes. These interaction terms are computed using a self-attention mechanism [17].
+$$
+r_{ij} = W_{ij} \cdot V_{j}
+$$
 
-In BAM, each node feature $x_{j}$ is projected via linear layers into a key vector $K_{j}$ and a value vector $V_{j}$, while a query vector $Q_{i}$ is derived from $x_{i}$. The attention weight between the $i^{\text{th}}$ and $j^{\text{th}}$ point nodes is computed as:
+The global context-aware feature is:
 
-𝑊
-𝑖
-𝑗
-=
-softmax
-(
-𝑄
-𝑖
-⋅
-𝐾
-𝑗
-⊤
-)
-W
-ij
-	​
+$$
+a_{i} = \sum_{j=1}^{n} r_{ij}
+$$
 
-=softmax(Q
-i
-	​
+This feature is aggregated via multi-head attention, concatenated with the local node feature $x_{i}$, and upsampled through feature propagation. Focal loss is applied to address class imbalance.
 
-⋅K
-j
-⊤
-	​
-
-)
-
-The interaction term is obtained by:
-
-𝑟
-𝑖
-𝑗
-=
-𝑊
-𝑖
-𝑗
-⋅
-𝑉
-𝑗
-r
-ij
-	​
-
-=W
-ij
-	​
-
-⋅V
-j
-	​
-
-
-A global context-aware feature is computed as:
-
-𝑎
-𝑖
-=
-∑
-𝑗
-=
-1
-𝑛
-𝑟
-𝑖
-𝑗
-a
-i
-	​
-
-=
-j=1
-∑
-n
-	​
-
-r
-ij
-	​
-
-
-This feature is aggregated via multi-head attention, concatenated with the local node feature $x_{i}$, and upsampled through feature propagation. To address class imbalance between foreground and background regions, focal loss [18] is applied. The architecture of BAM is illustrated in Figure 3.
+{% endraw %}
 
 ### **URG (unified regional and grid) RoI Pooling head**
 
