@@ -11,8 +11,6 @@ profile:
   image_circular: false # crops the image to make it circular
   more_info: >
     <p>Email: goeun678@gmail.com</p>
-    <p>GitHub: https://github.com/Groovy52</p>
-    <p>Email: [goeun678@gmail.com](https://scholar.google.com/citations?user=dFrDfNsAAAAJ)</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
