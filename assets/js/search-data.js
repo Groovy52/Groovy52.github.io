@@ -484,7 +484,7 @@ ninja.data = [{
               window.location.href = "/projects/sald-net/";
             },},{id: "projects-sald-net",
           title: 'SALD-Net',
-          description: "another without an image",
+          description: "Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment",
           section: "Projects",handler: () => {
               window.location.href = "/projects/saldnet/";
             },},{id: "teachings-data-science-fundamentals",
