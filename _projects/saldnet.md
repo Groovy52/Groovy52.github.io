@@ -61,38 +61,14 @@ Dense multi-object motion made instance separation extremely difficult
 
 ## 4. Method
 
-### 4.1 Hospital-Specific Dataset Construction
-
-- Installed **19 Flash LiDAR sensors** across four hospital zones
-- Collected **10,985 real-world point cloud scenes** at 5 FPS
-- Designed acquisition scenarios based on real collision-risk workflows
-
-All data were captured without RGB to preserve patient privacy
-
-
-### 4.2 Preprocessing Pipeline for Indoor LiDAR
-
-To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
-
-- Voxel-based downsampling for density normalization 
-- RANSAC filtering to remove structural planes 
-- Statistical outlier removal for sensor noise reduction 
-- Coordinate normalization for consistent learning input 
-
-### 4.3 Class-Imbalance Mitigation
-
-A GT-sampling augmentation strategy increased rare-class instances
-while maintaining realistic hospital distributions
-
-
-### 4.4 Self-Attention-Based Detection Architecture
+### 4.1 Self-Attention-Based Detection Architecture
 
 SALD-Net introduces two attention modules:
 
-- **BAM (Backbone Attention Module)**  
+- **BAM (Backbone-integrated self-attention mechanism)**  
   Enhances global geometric dependency beyond PointNet++ local features. 
 
-- **RAM (RoI Attention Module)**  
+- **Hierarchical grid RoI pooling & RAM (RoI feature-based self-attention mechanism)**  
   Refines proposals using contextual relationships between neighboring objects. 
 
 This enables robust detection under occlusion and overlapping scenarios
@@ -125,16 +101,6 @@ This multi-zone configuration enabled the dataset to capture heterogeneous clini
 
 ### 5-2. Data Preprocessing and Augmentation Process
 
-**Motivation for Preprocessing**
-
-Raw LiDAR point clouds contain:
-- irregular density distributions
-- measurement noise
-- background structures (e.g., floors and walls)
-- redundant spatial samples.
-
-Such characteristics significantly increase computational cost and degrade training stability. Therefore, preprocessing was applied to denoise, normalize, and reduce data complexity while preserving structural geometry necessary for 3D detection. All preprocessing steps were implemented using Open3D.
-
 **Preprocessing Pipeline**
 
 <div class="row">
@@ -146,12 +112,52 @@ Such characteristics significantly increase computational cost and degrade train
     Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class
 </div>
 
+To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
+- Voxel-based downsampling for density normalization
+Voxel-based downsampling was applied with a voxel size of 0.25 m:
+    - projects points into voxel grids,
+    - replaces points within each voxel by their centroid,
+    - reduces point density while maintaining global geometry.
+      
+- RANSAC filtering to remove structural planes
+To separate foreground objects from structural background, a RANSAC-based plane fitting algorithm was applied with:
+    - distance threshold: 0.2 m
+    - minimum sampled points: 3
+    - maximum iterations: 500
+    
+- Statistical outlier removal for sensor noise reduction
+To suppress measurement noise, statistical filtering was performed using:
+    - number of neighbors: 20
+    - standard deviation ratio: 1.5
+
+**Data Augmentation**
 
 
 ### 5-3. Software
-- Framework: PyTorch + OpenPCDet 
-- Training: 100 epochs with Adam optimizer 
-- Hardware: RTX 3090 environment
+
+**Framework**
+- The proposed network and all comparative models were implemented using PyTorch 1.9.1.
+- Baseline methods in Table 2 were reproduced using the OpenPCDet toolbox, a widely adopted open-source framework for 3D object detection.
+- Except for adapting configurations to the hospital-specific dataset, all models retained their default settings provided in the official repository to ensure fair comparison.
+
+**Training**
+- Optimization was performed using the Adam optimizer.
+- Batch size: 4
+- Training epochs: 100
+- A cosine annealing learning rate schedule was adopted:
+  - Initial learning rate: 0.001
+  - Increased gradually to a peak of 0.01 during the first 40% of training steps
+  - Decreased smoothly to a minimal value over the remaining 60% of training.
+
+- Online augmentation techniques included:
+  - Random flipping
+  - Random rotation in the range of −45° to 45°
+  - Scaling with factors between 0.95 and 1.05
+
+**Hardware**
+- Training was conducted on an NVIDIA GeForce RTX 3090 GPU.
+- The environment utilized CUDA 11.1 for GPU acceleration.
+  
 ---
 
 ## 6. Results
