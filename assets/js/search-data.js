@@ -467,8 +467,8 @@ ninja.data = [{
           description: "a project with a background image and giscus comments",
           section: "Projects",handler: () => {
               window.location.href = "/projects/2_project/";
-            },},{id: "projects-project-3-with-very-long-name",
-          title: 'project 3 with very long name',
+            },},{id: "projects-project-3-with-longlonglong",
+          title: 'project 3 with longlonglong~~~',
           description: "a project that redirects to another website",
           section: "Projects",handler: () => {
               window.location.href = "/projects/3_project/";
@@ -502,9 +502,9 @@ ninja.data = [{
           description: "another project with an image 🎉",
           section: "Projects",handler: () => {
               window.location.href = "/projects/9_project/";
-            },},{id: "projects-",
-          title: '',
-          description: "",
+            },},{id: "projects-sald-net",
+          title: 'SALD-Net',
+          description: "Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment",
           section: "Projects",handler: () => {
               window.location.href = "/projects/sald-net/";
             },},{id: "teachings-data-science-fundamentals",
