@@ -7,35 +7,19 @@ importance: 3
 category: fun
 ---
 
-# 1. Overview
+## 1. Overview
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
+Autonomous mobile robots (AMRs) are increasingly deployed in hospitals to mitigate workforce shortages and support healthcare delivery by performing tasks such as medication transport and patient guidance.
 
-To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+However, accurate **3D object detection in hospital environments** is significantly more difficult than in outdoor autonomous driving scenarios due to dense human-object interactions, privacy constraints, and sensor limitations.
 
-    ---
-    layout: page
-    title: project
-    description: a project with a background image
-    img: /assets/img/12.jpg
-    ---
+This project proposes **SALD-Net**, a self-attention-based 3D detection framework designed specifically for hospital LiDAR environments. 
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
-</div>
+---
+
+## 2. Why This Problem Matters
+### 2-1. Why Hospital Detection Is Challenging
+
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
