@@ -1,7 +1,8 @@
 ---
 layout: page
 title: SALD-Net
-description: Self-Attention-based 3D Object Detection for Hospital AMR Navigation
+description: Self-attention-integrated LiDAR-based 3D object detection
+network inacrowdedhospitalenvironment
 img: assets/img/sald-net_fig2.png
 importance: 1
 category: research
@@ -9,12 +10,9 @@ category: research
 
 # 1. Overview
 
-Autonomous mobile robots (AMRs) are increasingly deployed in hospitals for tasks such as
-medication delivery, patient guidance, and nighttime monitoring.
+Autonomous mobile robots (AMRs) are increasingly deployed in hospitals to mitigate workforce shortages and support healthcare delivery by performing tasks such as medication transport and patient guidance.
 
-However, accurate **3D object detection in hospital environments** is significantly more difficult
-than in outdoor autonomous driving scenarios due to dense human-object interactions,
-privacy constraints, and sensor limitations. :contentReference[oaicite:0]{index=0}
+However, accurate **3D object detection in hospital environments** is significantly more difficult than in outdoor autonomous driving scenarios due to dense human-object interactions, privacy constraints, and sensor limitations. :contentReference[oaicite:0]{index=0}
 
 This project proposes **SALD-Net**, a self-attention-based 3D detection framework designed
 specifically for hospital LiDAR environments. :contentReference[oaicite:1]{index=1}
