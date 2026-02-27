@@ -26,29 +26,119 @@ This project proposes **SALD-Net**, a self-attention-based 3D detection framewor
     </div>
 </div>
 <div class="caption">
-    This image can also have a caption. It's like magic.
+    Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations
 </div>
 
-You can also put regular text between your rows of images.
-Say you wanted to write a little bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
+Hospital environments exhibit unique domain characteristics:
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
+- Frequent **overlapping interactions** between patients, staff, beds, and wheelchairs
+- Narrow and cluttered corridors causing severe **occlusion and partial observations**
+- Lack of domain-specific datasets compared to public benchmark datasets such as KITTI and Waymo which focus on outdoor driving scenes
+beds and wheelchairs
+- Strict privacy regulations preventing RGB-based perception → depth-only sensing required 
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+As a result, models trained on datasets such as KITTI or Waymo suffer from strong domain shift
+
+---
+
+# 3. Challenges
+
+The project addressed four key problems:
+
+## 3-1. Domain Gap
+The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds, wheelchairs) pose significant challenges
+
+## 3-2. Sensor Noise & Low Resolution
+Flash LiDAR introduced outliers and unclear object boundaries
+
+## 3-3. Class Imbalance 
+Wheelchairs and beds appeared far less frequently than people
+
+## 3-4. Occlusion & Overlapping Objects
+Dense multi-object motion made instance separation extremely difficult
+
+---
+
+# 4. Approach
+
+## 4.1 Hospital-Specific Dataset Construction
+
+- Installed **19 Flash LiDAR sensors** across four hospital zones
+- Collected **10,985 real-world point cloud scenes** at 5 FPS
+- Designed acquisition scenarios based on real collision-risk workflows
+
+All data were captured without RGB to preserve patient privacy
+
+
+## 4.2 Preprocessing Pipeline for Indoor LiDAR
+
+To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
+
+- Voxel-based downsampling for density normalization 
+- RANSAC filtering to remove structural planes 
+- Statistical outlier removal for sensor noise reduction 
+- Coordinate normalization for consistent learning input 
+
+## 4.3 Class-Imbalance Mitigation
+
+A GT-sampling augmentation strategy increased rare-class instances
+while maintaining realistic hospital distributions
+
+
+## 4.4 Self-Attention-Based Detection Architecture
+
+SALD-Net introduces two attention modules:
+
+- **BAM (Backbone Attention Module)**  
+  Enhances global geometric dependency beyond PointNet++ local features. 
+
+- **RAM (RoI Attention Module)**  
+  Refines proposals using contextual relationships between neighboring objects. 
+
+This enables robust detection under occlusion and overlapping scenarios
+
+
+---
+
+# 5. Implementation Details
+
+- Framework: PyTorch + OpenPCDet 
+- Training: 100 epochs with Adam optimizer 
+- Hardware: RTX 3090 environment
+- Dataset split: 6:2:2 (train/val/test) 
+
+---
+
+# 6. Results
+
+SALD-Net significantly outperformed the baseline Part-A2 detector:
+
+- **3D mAP: 89.08%** 
+- Overall improvement: **+19.56%** 
+- Wheelchair detection: +22.85%p 
+The model successfully separated objects that previous detectors failed to distinguish in cluttered hospital scenes
+
+
+---
+
+# 7. Technical Takeaways
+
+This work demonstrates that:
+
+- Indoor medical environments require **domain-specific perception modeling**
+- Global relational reasoning is critical for dense human-object interaction scenes
+- Dataset realism is as important as model architecture for safety-critical robotics
+
+---
+
+# 8. Future Work
+
+Future extensions include:
+
+- Multi-sensor fusion for improved spatial robustness
+- Deployment-oriented optimization for real-time AMR navigation
+- Transfer of the preprocessing pipeline to radar-based perception systems
+
 
 {% raw %}
 
