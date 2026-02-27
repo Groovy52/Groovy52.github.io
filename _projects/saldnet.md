@@ -1,11 +1,13 @@
 ---
 layout: page
 title: SALD-Net
-description: another without an image
-img:
+description: Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment
+img: assets/img/sald-net_fig2.png
 importance: 3
 category: fun
 ---
+
+# 1. Overview
 
 Every project has a beautiful feature showcase page.
 It's easy to include images in a flexible 3-column grid format.
