@@ -22,7 +22,7 @@ This project proposes **SALD-Net**, a self-attention-based 3D detection framewor
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig1.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -31,8 +31,8 @@ This project proposes **SALD-Net**, a self-attention-based 3D detection framewor
 
 Hospital environments exhibit unique domain characteristics:
 
-- Frequent **overlapping interactions** between patients, staff, beds, and wheelchairs
-- Narrow and cluttered corridors causing severe **occlusion and partial observations**
+- Frequent overlapping interactions between patients, staff, beds, and wheelchairs
+- Narrow and cluttered corridors causing severe occlusion and partial observations
 - Lack of domain-specific datasets compared to public benchmark datasets such as KITTI and Waymo which focus on outdoor driving scenes
 beds and wheelchairs
 - Strict privacy regulations preventing RGB-based perception → depth-only sensing required 
@@ -41,27 +41,27 @@ As a result, models trained on datasets such as KITTI or Waymo suffer from stron
 
 ---
 
-# 3. Challenges
+## 3. Challenges
 
 The project addressed four key problems:
 
-## 3-1. Domain Gap
+### 3-1. Domain Gap
 The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds, wheelchairs) pose significant challenges
 
-## 3-2. Sensor Noise & Low Resolution
+### 3-2. Sensor Noise & Low Resolution
 Flash LiDAR introduced outliers and unclear object boundaries
 
-## 3-3. Class Imbalance 
+### 3-3. Class Imbalance 
 Wheelchairs and beds appeared far less frequently than people
 
-## 3-4. Occlusion & Overlapping Objects
+### 3-4. Occlusion & Overlapping Objects
 Dense multi-object motion made instance separation extremely difficult
 
 ---
 
-# 4. Approach
+## 4. Method
 
-## 4.1 Hospital-Specific Dataset Construction
+### 4.1 Hospital-Specific Dataset Construction
 
 - Installed **19 Flash LiDAR sensors** across four hospital zones
 - Collected **10,985 real-world point cloud scenes** at 5 FPS
@@ -70,7 +70,7 @@ Dense multi-object motion made instance separation extremely difficult
 All data were captured without RGB to preserve patient privacy
 
 
-## 4.2 Preprocessing Pipeline for Indoor LiDAR
+### 4.2 Preprocessing Pipeline for Indoor LiDAR
 
 To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
 
@@ -79,13 +79,13 @@ To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
 - Statistical outlier removal for sensor noise reduction 
 - Coordinate normalization for consistent learning input 
 
-## 4.3 Class-Imbalance Mitigation
+### 4.3 Class-Imbalance Mitigation
 
 A GT-sampling augmentation strategy increased rare-class instances
 while maintaining realistic hospital distributions
 
 
-## 4.4 Self-Attention-Based Detection Architecture
+### 4.4 Self-Attention-Based Detection Architecture
 
 SALD-Net introduces two attention modules:
 
@@ -100,16 +100,61 @@ This enables robust detection under occlusion and overlapping scenarios
 
 ---
 
-# 5. Implementation Details
+## 5. Implementation Details
 
+### 5-1. Data Acquisition
+
+**LiDAR Sensor Configuration**
+A total of 10,985 point cloud scenes were collected at the Veterans Health Service Medical Center between 2022 and 2023 using flash-type LiDAR sensors (NSL-1110AV, NANOSYSTEMS Corp., Gyeongsan, South Korea) operating at 5 frames per second (FPS).
+
+LiDAR systems are broadly categorized into scanning and flash types. Unlike scanning LiDAR, which sequentially emits laser beams, flash LiDAR captures the entire scene simultaneously, providing robust and stable sensing for fixed indoor installations with simpler hardware and improved durability. 
+
+Although flash LiDAR offers lower spatial resolution and a narrower field of view than scanning LiDAR, it is well suited for hospital environments, where reliable operation and privacy-preserving depth sensing are more important than long-range perception.
+
+Each captured point cloud had a spatial resolution of 320 × 240 voxels with a sensing depth of up to 12 m.
+
+**Sensor Deployment in a Hospital Environment**
+A total of 19 LiDAR sensors were installed in fixed positions across four representative hospital zones: Radiology Department, Laboratory Medicine, Inpatient Ward A, and Inpatient Ward B
+
+These locations were deliberately selected to ensure:
+- spatial diversity of indoor geometries
+- varied human–robot interaction scenarios
+- realistic collision-risk environments for AMR deployment.
+
+This multi-zone configuration enabled the dataset to capture heterogeneous clinical workflows and dynamic object interactions, producing a representative benchmark for hospital navigation systems.
+
+### 5-2. Data Preprocessing and Augmentation Process
+
+**Motivation for Preprocessing**
+
+Raw LiDAR point clouds contain:
+- irregular density distributions
+- measurement noise
+- background structures (e.g., floors and walls)
+- redundant spatial samples.
+
+Such characteristics significantly increase computational cost and degrade training stability. Therefore, preprocessing was applied to denoise, normalize, and reduce data complexity while preserving structural geometry necessary for 3D detection. All preprocessing steps were implemented using Open3D.
+
+**Preprocessing Pipeline**
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig5.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class
+</div>
+
+
+
+### 5-3. Software
 - Framework: PyTorch + OpenPCDet 
 - Training: 100 epochs with Adam optimizer 
 - Hardware: RTX 3090 environment
-- Dataset split: 6:2:2 (train/val/test) 
-
 ---
 
-# 6. Results
+## 6. Results
 
 SALD-Net significantly outperformed the baseline Part-A2 detector:
 
@@ -121,7 +166,7 @@ The model successfully separated objects that previous detectors failed to disti
 
 ---
 
-# 7. Technical Takeaways
+## 7. Technical Takeaways
 
 This work demonstrates that:
 
@@ -131,7 +176,7 @@ This work demonstrates that:
 
 ---
 
-# 8. Future Work
+## 8. Future Work
 
 Future extensions include:
 
@@ -139,18 +184,3 @@ Future extensions include:
 - Deployment-oriented optimization for real-time AMR navigation
 - Transfer of the preprocessing pipeline to radar-based perception systems
 
-
-{% raw %}
-
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-```
-
-{% endraw %}
