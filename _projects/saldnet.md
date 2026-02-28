@@ -9,11 +9,11 @@ category: work
 
 ## 1. Overview
 
-Autonomous mobile robots (AMRs) are increasingly deployed in hospitals to mitigate workforce shortages and to support healthcare delivery through tasks such as medication transport and patient guidance.
+**Autonomous mobile robots (AMRs) are increasingly deployed in hospitals** to mitigate workforce shortages through supporting tasks such as medication transport and patient guidance.
 
-However, accurate 3D object detection in hospital environments is significantly more challenging than in outdoor autonomous driving scenarios due to dense human–object interactions, privacy constraints, and sensor limitations.
+However, **accurate 3D object detection in hospital environments is significantly more challenging** than in outdoor autonomous driving scenarios due to dense human–object interactions, privacy constraints, and sensor limitations.
 
-In this project, SALD-Net is proposed as a self-attention-based 3D detection framework specifically designed for hospital LiDAR environments.
+In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object detection network in a crowded hospital environment** is proposed.
 
 ---
 
