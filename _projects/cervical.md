@@ -37,7 +37,7 @@ This perspective aligns with the shift toward **Data-Centric AI**, where dataset
 
 ## 3. Proposed Approach
 
-Figure 2 illustrates the overall workflow of the proposed method for automatically classifying unreadable cervical images.
+Fig. 2 illustrates the overall workflow of the proposed method for automatically classifying unreadable cervical images.
 The algorithm evaluates whether an image is diagnostically usable by quantifying brightness, blur, and anatomical positioning.
 All metric values are normalized between **0 (0%) and 1 (100%)** using the full distribution of readable-image data.
 
@@ -67,16 +67,16 @@ The second indicator is the **degree of blur**, defined as the sharpness of the 
 
 The third indicator evaluates whether the cervical os region is properly captured.
 - A template image with the cervical region centered is defined.
-- Similarity between the template and an input image is computed using **Euclidean distance**
+- Similarity between the template and an input image is computed using **Euclidean distance.**
 
-Examples of unreadable cases identified using these criteria are presented in Figure 3, including:
+Examples of unreadable cases identified using these criteria are presented in Fig. 3, including:
 - excessively bright or dark images,
 - blurred images,
 - images where the cervical region is improperly captured.
 
 #### 3-2. Classification Procedure
 
-The full decision process is depicted in **Figure 4** and proceeds as follows:
+The full decision process is depicted in **Fig. 4** and proceeds as follows:
 
 **1) Input Stage**
 A cervical image is provided to the algorithm.
@@ -106,154 +106,104 @@ Within the normalized classification standard:
 
 #### 4-1. Data Acquisition
 
-The dataset was collected specifically for this study.
-Due to hospital privacy regulations, it cannot be publicly released.
-Access may be granted upon institutional agreement.
+A total of 2,257 cervical images were collected using a cervical imaging diagnostic device (Dr. Cervicam, NTL Healthcare).
+- The study protocol was approved by the Institutional Review Board (IRB No. EUMC 2015-10-004), and all data were fully anonymized prior to analysis.
+- To ensure clear clinical separability, the dataset was composed using extreme stages of the cervical cancer progression spectrum, following the WHO classification system.
 
-**LiDAR Sensor Configuration**
+According to the WHO framework, cervical cancer develops through the following stages:
 
-A total of 10,985 point cloud scenes were collected at the Veterans Health Service Medical Center between 2022 and 2023 using flash-type LiDAR sensors (NSL-1110AV, NANOSYSTEMS Corp., Gyeongsan, South Korea) operating at 5 frames per second (FPS).
+**Normal → Atypical → LSIL → HSIL → Invasive Cervical Cancer**
 
-LiDAR systems are broadly categorized into scanning and flash types. Unlike scanning LiDAR, which sequentially emits laser beams, flash LiDAR captures the entire scene simultaneously, providing robust and stable sensing for fixed indoor installations with simpler hardware and improved durability. 
+For this study:
+- **Readable Images (2,000 total)**
+  - 1,000 Normal cases (control group)
+  - 1,000 HSIL cases (lesion group)
+- **Unreadable Images (257 total)**
+  - Images judged by experts as diagnostically unusable.
 
-Although flash LiDAR offers lower spatial resolution and a narrower field of view than scanning LiDAR, it is well suited for hospital environments, where reliable operation and privacy-preserving depth sensing are more important than long-range perception.
-
-Each captured point cloud had a spatial resolution of 320 × 240 voxels with a sensing depth of up to 12 m.
-
-**Sensor Deployment in a Hospital Environment**
-
-A total of 19 LiDAR sensors were installed in fixed positions across four representative hospital zones: Radiology Department, Laboratory Medicine, Inpatient Ward A, and Inpatient Ward B
-
-These locations were deliberately selected to ensure:
-- spatial diversity of indoor geometries
-- varied human–robot interaction scenarios
-- realistic collision-risk environments for AMR deployment.
-
-This multi-zone configuration enabled the dataset to capture heterogeneous clinical workflows and dynamic object interactions, producing a representative benchmark for hospital navigation systems.
+All images were stored as **24-bit JPG files** and resized to **256 × 256 pixels** before model processing.
 
 #### 4-2. Data Preprocessing and Augmentation Process
+Unreadable images in the collected dataset were initially labeled by clinical experts due to issues such as abnormal brightness, reflections, or other visual defects that prevented cervical identification.
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig5.png" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Fig 5. Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class
-</div>
+**Resolution and Aspect Ratio Normalization**
+The raw dataset contained heterogeneous image sizes (2048×1536, 1280×960, 1504×1000) and varying aspect ratios.
 
-To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
-- **Voxel-based downsampling for density normalization
-Voxel-based downsampling was applied with a voxel size of 0.25 m:**
-    - projects points into voxel grids,
-    - replaces points within each voxel by their centroid,
-    - reduces point density while maintaining global geometry.
-      
-- **RANSAC filtering to remove structural planes
-To separate foreground objects from structural background, a RANSAC-based plane fitting algorithm was applied with:**
-    - distance threshold: 0.2 m
-    - minimum sampled points: 3
-    - maximum iterations: 500
-    
-- **Statistical outlier removal for sensor noise reduction
-To suppress measurement noise, statistical filtering was performed using:**
-    - number of neighbors: 20
-    - standard deviation ratio: 1.5
+To standardize spatial representation:
+- The shorter side of each image was used as the reference dimension.
+- Images were center-cropped to produce a consistent square format.
 
-**Data Augmentation**
-The preprocessed dataset of 10,985 scenes is split into 6,591 training, 2,197 validation, and 2,197 test samples. To mitigate class imbalance among robots, people, beds, and wheelchairs, GT sampling is adopted, a widely used data augmentation method originally introduced in SECOND.
+**Removal of Non-Anatomical Tags**
 
-Specifically, annotated objects from a database are inserted into other training scenes. This augmentation increases the number of robots, beds, and wheelchairs, as summarized in Table 1.
+Some images contained metadata tags in the lower-right corner.
+These tags could be mistakenly interpreted as anatomical structures by AI models.
 
-To avoid object overlaps, the z-coordinate of each inserted object is set to the lowest height among existing objects.
-For horizontal positioning, inserted objects are placed beyond the largest existing x or y coordinates in the scene, depending on the spatial distribution of existing objects.
+Therefore:
+- Tag regions were removed prior to analysis to prevent false feature learning.
 
-If existing objects are located along the positive x-axis, new objects are placed further along the y-axis, and vice versa.
-Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0), ensuring consistent spatial scaling across the dataset.
+**Center Alignment of the Cervical Region**
 
-#### 4-3. Software
+The diagnostically important cervical os was not always located at the image center.
+- The main anatomical region was spatially normalized,
+- Feature calculations reflected anatomical characteristics rather than positional bias.
+
+#### 4-2. Software
 
 **Framework**
-- The proposed network and all comparative models were implemented using PyTorch 1.9.1.
-- Baseline methods in Table 2 were reproduced using the OpenPCDet toolbox, a widely adopted open-source framework for 3D object detection.
-- Except for adapting configurations to the hospital-specific dataset, all models retained their default settings provided in the official repository to ensure fair comparison.
+- The proposed network and all comparative models were implemented using TensorFlow/Keras, which was the most widely used framework for transfer learning with ResNet50 in medical imaging research.
+- Standalone Keras (v2.4) was already being phased into tf.keras, making TensorFlow-integred Keras the more likely setup.
 
 **Training**
 - Optimization was performed using the Adam optimizer.
-- Batch size: 4
-- Training epochs: 100
+- Batch size: 16
+- Training epochs: 300
 - A cosine annealing learning rate schedule was adopted:
-  - Initial learning rate: 0.001
-  - Increased gradually to a peak of 0.01 during the first 40% of training steps
-  - Decreased smoothly to a minimal value over the remaining 60% of training.
-
-- Online augmentation techniques included:
-  - Random flipping
-  - Random rotation in the range of −45° to 45°
-  - Scaling with factors between 0.95 and 1.05
+  - Initial learning rate: 0.0001
 
 **Hardware**
-- Training was conducted on an NVIDIA GeForce RTX 3090 GPU.
-- The environment utilized CUDA 11.1 for GPU acceleration.
+- The environment utilized CUDA 10.1
   
 ---
 
 ## 5. Results
 
-SALD-Net significantly outperformed the baseline Part-A2 detector:
-
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig6.png" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Qualitative comparison of 3D object detection results from baseline methods and SALD-Net on the test set. Background points are shown in black, and object points are color-coded by class. Top down BEV images provide overall scene context, while zoomed-in 3D RoIs highlight mispredicted objects. Detection errors—misclassified, missed, or over-detected—are indicated by arrows. Ground-truth and predicted objects are shown in red and aqua-blue bounding boxes, respectively
-</div>
 
 
-- **3D mAP: 89.08%** 
-- Overall improvement: **+19.56%** 
-- Wheelchair detection: +22.85%p 
-The model successfully separated objects that previous detectors failed to distinguish in cluttered hospital scenes
 
-
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_Table2.png" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Table 2. Qualitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS
-</div>
-
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_Table3.png" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Table 3.  Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different net
-work modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism
-</div>
 
 ---
 
 ## 6. Technical Takeaways
 
 This work demonstrates that:
+#### 6-1. Data-Centric AI Can Rival Model-Centric Improvements
+Performance gains were achieved without changing the backbone network, emphasizing that dataset reliability is a first-order factor in AI success.
 
-- Indoor medical environments require **domain-specific perception modeling**
-- Global relational reasoning is critical for dense human-object interaction scenes
-- Dataset realism is as important as model architecture for safety-critical robotics
+#### 6-2. Image Readability Can Be Quantified
+Radiomics enables translation of subjective clinical judgments into:
+- Reproducible numerical metrics
+- Automated dataset validation
+- Scalable quality control pipelines
+
+#### 6-3. Practical Deployment Value
+
+This framework is immediately applicable to:
+- Pre-training dataset validation
+- Multi-center data harmonization
+- Clinical AI safety pipelines
 
 ---
 
 ## 7. Future Work
 
-Future extensions include:
+#### 7-1. Quality-Aware Training (Soft Weighting Instead of Hard Filtering)
+Incorporate readability scores directly into loss weighting.
 
-- Multi-sensor fusion for improved spatial robustness
-- Deployment-oriented optimization for real-time AMR navigation
-- Transfer of the preprocessing pipeline to radar-based perception systems
+#### 7-2. Artifact Localization Models
+Move from detecting whether an image is degraded to where degradation occurs.
 
+#### 7-3. Automated Data-Curation Pipelines
+Continuous dataset refinement during model lifecycle (active data governance).
+
+#### 7-4. Multi-Modality Extension
+Apply the framework to CT, MRI, ultrasound, and CBCT environments.
