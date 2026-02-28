@@ -18,7 +18,7 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 ---
 
 ## 2. Why This Problem Matters
-### 2-1. Why Hospital Detection Is Challenging
+#### 2-1. Why Hospital Detection Is Challenging
 
 <div class="row justify-content-center">
     <div class="col-sm-8 col-md-6 mt-3 mt-md-0">
@@ -26,10 +26,10 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
     </div>
 </div>
 <div class="caption">
-    Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations
+    **Fig 1.** Illustration of challenges in 3D object detection in hospital environments. B**ackground points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations
 </div>
 
-Hospital environments exhibit unique domain characteristics:
+**Hospital environments exhibit unique domain characteristics:**
 
 - Frequent overlapping interactions between patients, staff, beds, and wheelchairs
 - Narrow and cluttered corridors causing severe occlusion and partial observations
@@ -37,39 +37,48 @@ Hospital environments exhibit unique domain characteristics:
 beds and wheelchairs
 - Strict privacy regulations preventing RGB-based perception → depth-only sensing required 
 
-As a result, models trained on datasets such as KITTI or Waymo are severely affected by domain shift when applied to hospital environments.
+As a result, models trained on datasets such as KITTI or Waymo are severely affected by **domain shift** when applied to **hospital environments.**
 
 ---
 
 ## 3. Challenges
 
-Four key challenges were addressed in this SALD-Net:
+**Four key challenges were addressed in this SALD-Net:**
 
-### 3-1. Domain Gap
+#### 3-1. Domain Gap
 The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds and wheelchairs) introduce significant detection difficulty.
 
-### 3-2. Sensor Noise & Low Resolution
+#### 3-2. Sensor Noise & Low Resolution
 Flash LiDAR data are characterized by outliers and indistinct object boundaries.
 
-### 3-3. Class Imbalance 
+#### 3-3. Class Imbalance 
 Wheelchairs and beds occur far less frequently than people, resulting in skewed training distributions.
 
-### 3-4. Occlusion & Overlapping Objects
-Dense multi-object motion makes instance separation highly challenging.
+#### 3-4. Occlusion & Overlapping Objects
+Dense multi-object motion due to move assistance makes instance separation highly challenging.
 
 ---
 
 ## 4. Method
 
-### 4.1 Self-Attention-Based Detection Architecture
+#### 4.1 Self-Attention-Based Detection Architecture
 
-SALD-Net is designed as a two-stage end-to-end 3D object detector tailored for flash-LiDAR indoor environments, where point clouds are sparse, low-resolution, and frequently occluded.
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig2.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+     Fig 2. The architecture of SALD-Net. The backbone extracts features
+via backbone-integrated self-attention mechanism (BAM). Foreground segmentation generates initial 3D box proposals, which are refined by the unified regional and grid (URG) RoI pooling head, enhanced with RoI feature-based self-attention mechanism (RAM). Fully connected (FC) layers output final confidence scores and bounding boxes
+</div>
 
-- Stage 1: Initial 3D proposal generation via PointNet++ backbone
-- Stage 2: Proposal refinement using a Unified Regional and Grid (URG) RoI pooling head
+SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored for **flash-LiDAR indoor environments**, where point clouds are sparse, low-resolution, and frequently occluded.
 
-#### 4-1-1. Backbone-integrated self-attention mechanism (BAM)**  
-BAM models long-range relationships between point groups while preserving continuous geometry.
+- **Stage 1**: Initial 3D proposal generation via PointNet++ backbone
+- **Stage 2**: Proposal refinement using a Unified Regional and Grid (URG) RoI pooling head
+
+**4-1-1. Backbone-integrated self-attention mechanism (BAM)**  
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -77,19 +86,22 @@ BAM models long-range relationships between point groups while preserving contin
     </div>
 </div>
 <div class="caption">
-     Architecture details of the backbone-integrated self-attention
+     Fig 2. Architecture details of the backbone-integrated self-attention
 mechanism (BAM)
 </div>
 
+BAM models long-range relationships between point groups while preserving continuous geometry.
+
 Given grouped features $X = \{x_1, \dots, x_n\}$, global dependencies are captured by connecting all node pairs through a self-attention formulation applied prior to geometric discretization. Each node feature $x_i$ represents a local point-wise grouped feature and $n$ is the number of groups $(i = 1, \dots, n)$. To capture global dependencies, all node pairs $(x_i, x_j)$ are connected via an edge set $E = \{r_{ij}, i,j = 1, \dots, n\}$, where each edge $r_{ij}$ represents the interaction between the $i^{\text{th}}$ and $j^{\text{th}}$ nodes. These interaction terms are computed using a self-attention mechanism. 
 
-In BAM, each node feature $x_j$ is projected via linear layers into a key vector $K_j$ and a value vector $V_j$, while a query vector $Q_i$ is derived from $x_i$. The attention weight $W_{ij}$ between the $i^{\text{th}}$ and $j^{\text{th}}$ point nodes is computed as $W_{ij} = \text{softmax}(Q_i \cdot K_j^\top)$. The interaction term $r_{ij}$ is obtained by multiplying the $W_{ij}$ and the $V_j$ as $r_{ij} = W_{ij} \cdot V_j$. A global context-aware feature $a_i = \sum_{j=1}^{n} r_{ij}$ is obtained and aggregated via multi-head attention, then concatenated with the local node feature $x_i$ and upsampled through feature propagation. To address class imbalance between foreground and background regions, focal loss is applied. The architecture of BAM is illustrated in Figure~\ref{fig3}.
+In BAM, each node feature $x_j$ is projected via linear layers into a key vector $K_j$ and a value vector $V_j$, while a query vector $Q_i$ is derived from $x_i$. The attention weight $W_{ij}$ between the $i^{\text{th}}$ and $j^{\text{th}}$ point nodes is computed as $W_{ij} = \text{softmax}(Q_i \cdot K_j^\top)$. The interaction term $r_{ij}$ is obtained by multiplying the $W_{ij}$ and the $V_j$ as $r_{ij} = W_{ij} \cdot V_j$. A global context-aware feature $a_i = \sum_{j=1}^{n} r_{ij}$ is obtained and aggregated via multi-head attention, then concatenated with the local node feature $x_i$ and upsampled through feature propagation. To address class imbalance between foreground and background regions, focal loss is applied. The architecture of BAM is illustrated in Fig. 3.
 
 This allows each local region to adaptively gather global structural cues without converting points into tokens or voxels:
 - Geometry-aware context modeling
 - Lightweight compared to full transformers
 
-#### 4-1-2. Unified Regional and Grid (URG) RoI Pooling head
+**4-1-2. Unified Regional and Grid (URG) RoI Pooling head**
+
 Indoor medical objects (beds, wheelchairs, AMRs):
 - vary greatly in scale,
 - are partially occluded,
@@ -98,11 +110,10 @@ Indoor medical objects (beds, wheelchairs, AMRs):
 URG combines:
 - **Regional RoI pooling** → captures surrounding context
 - **Hierarchical grid pooling** → extracts multi-scale internal structure
-- 
+
 This hybrid pooling preserves both external context and internal geometry for robust detection.
 
-#### 4-1-3. RoI feature-based self-attention mechanism (RAM)
-The RoI feature-based self-attention mechanism (RAM) refines the grouped point set from the hierarchical grid RoI pooling by integrating spatial and semantic relationships. 
+**4-1-3. RoI feature-based self-attention mechanism (RAM)**
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -113,6 +124,8 @@ The RoI feature-based self-attention mechanism (RAM) refines the grouped point s
      Architecture details of the RoI feature-based self-attention
 mechanism (RAM)
 </div>
+
+The RoI feature-based self-attention mechanism (RAM) refines the grouped point set from the hierarchical grid RoI pooling by integrating spatial and semantic relationships. 
 
 The architecture of RAM is illustrated in Figure~\ref{fig4}. The RAM takes as input the 3D coordinates $F_{\text{xyz}} \in \mathbb{R}^{N \times 3}$ and semantic features $F_f \in \mathbb{R}^{N \times C}$ of $N$ neighboring points. From $F_{\text{xyz}}$, a position embedding $p_e$ is computed via a fully connected (FC) layer. Semantic inputs $F_f$ are projected to key and value embeddings, $k_e$ via an FC layer, and $v_e$ via an MLP.
 
@@ -125,12 +138,14 @@ F_{\text{agg}} = \sum_{i=1}^{N} \text{Softmax}(\text{Attention map}^{(i)}) \odot
 
 ## 5. Implementation Details
 
-### 5-1. Data Acquisition
+#### 5-1. Data Acquisition
+
 The dataset was collected specifically for this study.
 Due to hospital privacy regulations, it cannot be publicly released.
 Access may be granted upon institutional agreement.
 
 **LiDAR Sensor Configuration**
+
 A total of 10,985 point cloud scenes were collected at the Veterans Health Service Medical Center between 2022 and 2023 using flash-type LiDAR sensors (NSL-1110AV, NANOSYSTEMS Corp., Gyeongsan, South Korea) operating at 5 frames per second (FPS).
 
 LiDAR systems are broadly categorized into scanning and flash types. Unlike scanning LiDAR, which sequentially emits laser beams, flash LiDAR captures the entire scene simultaneously, providing robust and stable sensing for fixed indoor installations with simpler hardware and improved durability. 
@@ -140,6 +155,7 @@ Although flash LiDAR offers lower spatial resolution and a narrower field of vie
 Each captured point cloud had a spatial resolution of 320 × 240 voxels with a sensing depth of up to 12 m.
 
 **Sensor Deployment in a Hospital Environment**
+
 A total of 19 LiDAR sensors were installed in fixed positions across four representative hospital zones: Radiology Department, Laboratory Medicine, Inpatient Ward A, and Inpatient Ward B
 
 These locations were deliberately selected to ensure:
@@ -149,9 +165,7 @@ These locations were deliberately selected to ensure:
 
 This multi-zone configuration enabled the dataset to capture heterogeneous clinical workflows and dynamic object interactions, producing a representative benchmark for hospital navigation systems.
 
-### 5-2. Data Preprocessing and Augmentation Process
-
-**Preprocessing Pipeline**
+#### 5-2. Data Preprocessing and Augmentation Process
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -159,24 +173,24 @@ This multi-zone configuration enabled the dataset to capture heterogeneous clini
     </div>
 </div>
 <div class="caption">
-    Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class
+    Fig 5. Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class
 </div>
 
 To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
-- Voxel-based downsampling for density normalization
-Voxel-based downsampling was applied with a voxel size of 0.25 m:
+- **Voxel-based downsampling for density normalization
+Voxel-based downsampling was applied with a voxel size of 0.25 m:**
     - projects points into voxel grids,
     - replaces points within each voxel by their centroid,
     - reduces point density while maintaining global geometry.
       
-- RANSAC filtering to remove structural planes
-To separate foreground objects from structural background, a RANSAC-based plane fitting algorithm was applied with:
+- **RANSAC filtering to remove structural planes
+To separate foreground objects from structural background, a RANSAC-based plane fitting algorithm was applied with:**
     - distance threshold: 0.2 m
     - minimum sampled points: 3
     - maximum iterations: 500
     
-- Statistical outlier removal for sensor noise reduction
-To suppress measurement noise, statistical filtering was performed using:
+- **Statistical outlier removal for sensor noise reduction
+To suppress measurement noise, statistical filtering was performed using:**
     - number of neighbors: 20
     - standard deviation ratio: 1.5
 
@@ -189,9 +203,9 @@ To avoid object overlaps, the z-coordinate of each inserted object is set to the
 For horizontal positioning, inserted objects are placed beyond the largest existing x or y coordinates in the scene, depending on the spatial distribution of existing objects.
 
 If existing objects are located along the positive x-axis, new objects are placed further along the y-axis, and vice versa.
-Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0), ensuring consistent spatial scaling across the dataset [21].
+Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0), ensuring consistent spatial scaling across the dataset.
 
-### 5-3. Software
+#### 5-3. Software
 
 **Framework**
 - The proposed network and all comparative models were implemented using PyTorch 1.9.1.
@@ -244,7 +258,7 @@ The model successfully separated objects that previous detectors failed to disti
     </div>
 </div>
 <div class="caption">
-    Qualitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS
+    Table 2. Qualitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS
 </div>
 
 <div class="row">
@@ -253,7 +267,8 @@ The model successfully separated objects that previous detectors failed to disti
     </div>
 </div>
 <div class="caption">
-    Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism
+    Table 3.  Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different net
+work modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism
 </div>
 
 ---
