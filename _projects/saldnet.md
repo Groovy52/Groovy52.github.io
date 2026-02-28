@@ -4,7 +4,7 @@ title: SALD-Net
 description: Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment
 img: assets/img/sald-net_fig2.png
 importance: 3
-category: fun
+category: research
 ---
 
 ## 1. Overview
@@ -63,7 +63,7 @@ Dense multi-object motion made instance separation extremely difficult
 
 ### 4.1 Self-Attention-Based Detection Architecture
 
-SALD-Net introduces two attention modules:
+SALD-Net introduces two self-attention modules:
 
 - **BAM (Backbone-integrated self-attention mechanism)**  
   Enhances global geometric dependency beyond PointNet++ local features. 
@@ -73,7 +73,9 @@ SALD-Net introduces two attention modules:
 
 This enables robust detection under occlusion and overlapping scenarios
 
-
++
+These coefficients update each embedding as follows: $v_e' = v_e + v_{\text{coef}} \odot p_e$, which incorporates spatial information into the value embedding; $p_e' = q_{\text{coef}} \odot p_e$, which adjusts the position embedding; $k_e' = k_{\text{coef}} \odot k_e$, which refines the semantic key embedding; and $pk_e' = qk_{\text{coef}} \odot pk_e$, which models their interaction. The attention map is computed as $\text{Attention map} = p_e' + k_e' + pk_e'$, which is then normalized via softmax and used to weight the updated value embedding $v_e'$ across $N$ neighboring points. The final aggregated feature is obtained as:
+\begin{equation}
 ---
 
 ## 5. Implementation Details
@@ -131,7 +133,15 @@ To suppress measurement noise, statistical filtering was performed using:
     - standard deviation ratio: 1.5
 
 **Data Augmentation**
+The preprocessed dataset of 10,985 scenes is split into 6,591 training, 2,197 validation, and 2,197 test samples. To mitigate class imbalance among robots, people, beds, and wheelchairs, we adopt GT sampling, a widely used data augmentation method originally introduced in SECOND.
 
+Specifically, annotated objects from a database are inserted into other training scenes. This augmentation increases the number of robots, beds, and wheelchairs, as summarized in Table 1.
+
+To avoid object overlaps, the z-coordinate of each inserted object is set to the lowest height among existing objects.
+For horizontal positioning, inserted objects are placed beyond the largest existing x or y coordinates in the scene, depending on the spatial distribution of existing objects.
+
+If existing objects are located along the positive x-axis, new objects are placed further along the y-axis, and vice versa.
+Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0), ensuring consistent spatial scaling across the dataset [21].
 
 ### 5-3. Software
 
