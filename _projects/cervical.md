@@ -167,8 +167,19 @@ The diagnostically important cervical os was not always located at the image cen
 
 ## 5. Results
 
+The proposed filtering algorithm significantly improved the overall classification performance by removing unreadable images before model training.
 
+- Using the entire dataset (without filtering): Precision 72.64%, Recall 65.04%, F1-score 68.55%, Accuracy 78.88%
+- Using the refined dataset (after applying the proposed algorithm): Precision 91.59%, Recall 93.09%, F1-score 92.31%, Accuracy 91.61%
 
+After filtering, the original 2,000 readable images were further refined to 1,357 high-quality samples, while the unfiltered dataset (1,257 images including unreadable cases) was used as the comparison baseline.
+
+Receiver Operating Characteristic (ROC) analysis also demonstrated clear performance gains:
+
+- AUC = 0.77 for the unfiltered dataset
+- AUC = 0.97 for the filtered dataset
+
+The difference between the two ROC curves was statistically significant (t-test, P < 0.0001), confirming that removing unreadable images leads to substantially improved diagnostic classification performance.
 
 
 ---
