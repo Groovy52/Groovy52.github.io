@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://groovy52.github.io/sitemap.xml
+Sitemap: /sitemap.xml
