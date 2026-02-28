@@ -477,6 +477,11 @@ ninja.data = [{
           description: "another without an image",
           section: "Projects",handler: () => {
               window.location.href = "/projects/4_project/";
+            },},{id: "projects-unreadable-image-classification",
+          title: 'Unreadable Image Classification',
+          description: "A Radiomics-based Unread Cervical Imaging Classification Algorithm",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/cervical/";
             },},{id: "projects-sald-net",
           title: 'SALD-Net',
           description: "Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment",
