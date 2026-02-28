@@ -4,7 +4,7 @@ title: SALD-Net
 description: Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment
 img: assets/img/sald-net_fig2.png
 importance: 3
-category: research
+category: work
 ---
 
 ## 1. Overview
@@ -63,10 +63,33 @@ Dense multi-object motion made instance separation extremely difficult
 
 ### 4.1 Self-Attention-Based Detection Architecture
 
-SALD-Net introduces two self-attention modules:
+SALD-Net is a two-stage end-to-end 3D object detector tailored for flash-LiDAR indoor environments, where point clouds are sparse, low-resolution, and frequently occluded.
 
-- **BAM (Backbone-integrated self-attention mechanism)**  
-  Enhances global geometric dependency beyond PointNet++ local features. 
+- Stage 1: Initial 3D proposal generation via PointNet++ backbone
+- Stage 2: Proposal refinement using a Unified Regional and Grid (URG) RoI pooling head
+
+#### 4-1-1. Backbone-integrated self-attention mechanism (BAM)**  
+BAM models long-range relationships between point groups while preserving continuous geometry.
+
+Given grouped features $X = \{x_1, \dots, x_n\}$ using farthest point sampling and grouping. Each node feature $x_i$ represents a local point-wise grouped feature and $n$ is the number of groups $(i = 1, \dots, n)$. To capture global dependencies, all node pairs $(x_i, x_j)$ are connected via an edge set $E = \{r_{ij}, i,j = 1, \dots, n\}$, where each edge $r_{ij}$ represents the interaction between the $i^{\text{th}}$ and $j^{\text{th}}$ nodes. These interaction terms are computed using a self-attention mechanism. 
+
+In BAM, each node feature $x_j$ is projected via linear layers into a key vector $K_j$ and a value vector $V_j$, while a query vector $Q_i$ is derived from $x_i$. The attention weight $W_{ij}$ between the $i^{\text{th}}$ and $j^{\text{th}}$ point nodes is computed as $W_{ij} = \text{softmax}(Q_i \cdot K_j^\top)$. The interaction term $r_{ij}$ is obtained by multiplying the $W_{ij}$ and the $V_j$ as $r_{ij} = W_{ij} \cdot V_j$. A global context-aware feature $a_i = \sum_{j=1}^{n} r_{ij}$ is obtained and aggregated via multi-head attention, then concatenated with the local node feature $x_i$ and upsampled through feature propagation. To address class imbalance between foreground and background regions, focal loss is applied. The architecture of BAM is illustrated in Figure~\ref{fig3}.
+
+This allows each local region to adaptively gather global structural cues without converting points into tokens or voxels:
+- Geometry-aware context modeling
+- Lightweight compared to full transformers
+
+#### 4-1-2. Unified Regional and Grid (URG) RoI Pooling head
+Indoor medical objects (beds, wheelchairs, AMRs):
+- vary greatly in scale,
+- are partially occluded,
+- contain limited LiDAR returns.
+
+URG combines:
+- **Regional RoI pooling** → captures surrounding context
+- **Hierarchical grid pooling** → extracts multi-scale internal structure
+- 
+This hybrid pooling preserves both external context and internal geometry for robust detection.
 
 - **Hierarchical grid RoI pooling & RAM (RoI feature-based self-attention mechanism)**  
   Refines proposals using contextual relationships between neighboring objects. 
@@ -133,7 +156,7 @@ To suppress measurement noise, statistical filtering was performed using:
     - standard deviation ratio: 1.5
 
 **Data Augmentation**
-The preprocessed dataset of 10,985 scenes is split into 6,591 training, 2,197 validation, and 2,197 test samples. To mitigate class imbalance among robots, people, beds, and wheelchairs, we adopt GT sampling, a widely used data augmentation method originally introduced in SECOND.
+The preprocessed dataset of 10,985 scenes is split into 6,591 training, 2,197 validation, and 2,197 test samples. To mitigate class imbalance among robots, people, beds, and wheelchairs, GT sampling is adopted, a widely used data augmentation method originally introduced in SECOND.
 
 Specifically, annotated objects from a database are inserted into other training scenes. This augmentation increases the number of robots, beds, and wheelchairs, as summarized in Table 1.
 
