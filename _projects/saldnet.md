@@ -9,19 +9,19 @@ category: work
 
 ## 1. Overview
 
-Autonomous mobile robots (AMRs) are increasingly deployed in hospitals to mitigate workforce shortages and support healthcare delivery by performing tasks such as medication transport and patient guidance.
+Autonomous mobile robots (AMRs) are increasingly deployed in hospitals to mitigate workforce shortages and to support healthcare delivery through tasks such as medication transport and patient guidance.
 
-However, accurate **3D object detection in hospital environments** is significantly more difficult than in outdoor autonomous driving scenarios due to dense human-object interactions, privacy constraints, and sensor limitations.
+However, accurate 3D object detection in hospital environments is significantly more challenging than in outdoor autonomous driving scenarios due to dense human–object interactions, privacy constraints, and sensor limitations.
 
-This project proposes **SALD-Net**, a self-attention-based 3D detection framework designed specifically for hospital LiDAR environments. 
+In this project, SALD-Net is proposed as a self-attention-based 3D detection framework specifically designed for hospital LiDAR environments.
 
 ---
 
 ## 2. Why This Problem Matters
 ### 2-1. Why Hospital Detection Is Challenging
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
+<div class="row justify-content-center">
+    <div class="col-sm-8 col-md-6 mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/sald-net_fig1.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
@@ -37,25 +37,25 @@ Hospital environments exhibit unique domain characteristics:
 beds and wheelchairs
 - Strict privacy regulations preventing RGB-based perception → depth-only sensing required 
 
-As a result, models trained on datasets such as KITTI or Waymo suffer from strong domain shift
+As a result, models trained on datasets such as KITTI or Waymo are severely affected by domain shift when applied to hospital environments.
 
 ---
 
 ## 3. Challenges
 
-The project addressed four key problems:
+Four key challenges were addressed in this SALD-Net:
 
 ### 3-1. Domain Gap
-The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds, wheelchairs) pose significant challenges
+The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds and wheelchairs) introduce significant detection difficulty.
 
 ### 3-2. Sensor Noise & Low Resolution
-Flash LiDAR introduced outliers and unclear object boundaries
+Flash LiDAR data are characterized by outliers and indistinct object boundaries.
 
 ### 3-3. Class Imbalance 
-Wheelchairs and beds appeared far less frequently than people
+Wheelchairs and beds occur far less frequently than people, resulting in skewed training distributions.
 
 ### 3-4. Occlusion & Overlapping Objects
-Dense multi-object motion made instance separation extremely difficult
+Dense multi-object motion makes instance separation highly challenging.
 
 ---
 
@@ -63,7 +63,7 @@ Dense multi-object motion made instance separation extremely difficult
 
 ### 4.1 Self-Attention-Based Detection Architecture
 
-SALD-Net is a two-stage end-to-end 3D object detector tailored for flash-LiDAR indoor environments, where point clouds are sparse, low-resolution, and frequently occluded.
+SALD-Net is designed as a two-stage end-to-end 3D object detector tailored for flash-LiDAR indoor environments, where point clouds are sparse, low-resolution, and frequently occluded.
 
 - Stage 1: Initial 3D proposal generation via PointNet++ backbone
 - Stage 2: Proposal refinement using a Unified Regional and Grid (URG) RoI pooling head
@@ -71,7 +71,17 @@ SALD-Net is a two-stage end-to-end 3D object detector tailored for flash-LiDAR i
 #### 4-1-1. Backbone-integrated self-attention mechanism (BAM)**  
 BAM models long-range relationships between point groups while preserving continuous geometry.
 
-Given grouped features $X = \{x_1, \dots, x_n\}$ using farthest point sampling and grouping. Each node feature $x_i$ represents a local point-wise grouped feature and $n$ is the number of groups $(i = 1, \dots, n)$. To capture global dependencies, all node pairs $(x_i, x_j)$ are connected via an edge set $E = \{r_{ij}, i,j = 1, \dots, n\}$, where each edge $r_{ij}$ represents the interaction between the $i^{\text{th}}$ and $j^{\text{th}}$ nodes. These interaction terms are computed using a self-attention mechanism. 
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig3.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+     Architecture details of the backbone-integrated self-attention
+mechanism (BAM)
+</div>
+
+Given grouped features $X = \{x_1, \dots, x_n\}$, global dependencies are captured by connecting all node pairs through a self-attention formulation applied prior to geometric discretization. Each node feature $x_i$ represents a local point-wise grouped feature and $n$ is the number of groups $(i = 1, \dots, n)$. To capture global dependencies, all node pairs $(x_i, x_j)$ are connected via an edge set $E = \{r_{ij}, i,j = 1, \dots, n\}$, where each edge $r_{ij}$ represents the interaction between the $i^{\text{th}}$ and $j^{\text{th}}$ nodes. These interaction terms are computed using a self-attention mechanism. 
 
 In BAM, each node feature $x_j$ is projected via linear layers into a key vector $K_j$ and a value vector $V_j$, while a query vector $Q_i$ is derived from $x_i$. The attention weight $W_{ij}$ between the $i^{\text{th}}$ and $j^{\text{th}}$ point nodes is computed as $W_{ij} = \text{softmax}(Q_i \cdot K_j^\top)$. The interaction term $r_{ij}$ is obtained by multiplying the $W_{ij}$ and the $V_j$ as $r_{ij} = W_{ij} \cdot V_j$. A global context-aware feature $a_i = \sum_{j=1}^{n} r_{ij}$ is obtained and aggregated via multi-head attention, then concatenated with the local node feature $x_i$ and upsampled through feature propagation. To address class imbalance between foreground and background regions, focal loss is applied. The architecture of BAM is illustrated in Figure~\ref{fig3}.
 
@@ -91,19 +101,34 @@ URG combines:
 - 
 This hybrid pooling preserves both external context and internal geometry for robust detection.
 
-- **Hierarchical grid RoI pooling & RAM (RoI feature-based self-attention mechanism)**  
-  Refines proposals using contextual relationships between neighboring objects. 
+#### 4-1-3. RoI feature-based self-attention mechanism (RAM)
+The RoI feature-based self-attention mechanism (RAM) refines the grouped point set from the hierarchical grid RoI pooling by integrating spatial and semantic relationships. 
 
-This enables robust detection under occlusion and overlapping scenarios
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig4.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+     Architecture details of the RoI feature-based self-attention
+mechanism (RAM)
+</div>
 
-+
+The architecture of RAM is illustrated in Figure~\ref{fig4}. The RAM takes as input the 3D coordinates $F_{\text{xyz}} \in \mathbb{R}^{N \times 3}$ and semantic features $F_f \in \mathbb{R}^{N \times C}$ of $N$ neighboring points. From $F_{\text{xyz}}$, a position embedding $p_e$ is computed via a fully connected (FC) layer. Semantic inputs $F_f$ are projected to key and value embeddings, $k_e$ via an FC layer, and $v_e$ via an MLP.
+
 These coefficients update each embedding as follows: $v_e' = v_e + v_{\text{coef}} \odot p_e$, which incorporates spatial information into the value embedding; $p_e' = q_{\text{coef}} \odot p_e$, which adjusts the position embedding; $k_e' = k_{\text{coef}} \odot k_e$, which refines the semantic key embedding; and $pk_e' = qk_{\text{coef}} \odot pk_e$, which models their interaction. The attention map is computed as $\text{Attention map} = p_e' + k_e' + pk_e'$, which is then normalized via softmax and used to weight the updated value embedding $v_e'$ across $N$ neighboring points. The final aggregated feature is obtained as:
 \begin{equation}
+F_{\text{agg}} = \sum_{i=1}^{N} \text{Softmax}(\text{Attention map}^{(i)}) \odot v_e'^{(i)} \label{eq1}
+\end{equation}
+
 ---
 
 ## 5. Implementation Details
 
 ### 5-1. Data Acquisition
+The dataset was collected specifically for this study.
+Due to hospital privacy regulations, it cannot be publicly released.
+Access may be granted upon institutional agreement.
 
 **LiDAR Sensor Configuration**
 A total of 10,985 point cloud scenes were collected at the Veterans Health Service Medical Center between 2022 and 2023 using flash-type LiDAR sensors (NSL-1110AV, NANOSYSTEMS Corp., Gyeongsan, South Korea) operating at 5 frames per second (FPS).
@@ -197,11 +222,39 @@ Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0
 
 SALD-Net significantly outperformed the baseline Part-A2 detector:
 
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig6.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Qualitative comparison of 3D object detection results from baseline methods and SALD-Net on the test set. Background points are shown in black, and object points are color-coded by class. Top down BEV images provide overall scene context, while zoomed-in 3D RoIs highlight mispredicted objects. Detection errors—misclassified, missed, or over-detected—are indicated by arrows. Ground-truth and predicted objects are shown in red and aqua-blue bounding boxes, respectively
+</div>
+
+
 - **3D mAP: 89.08%** 
 - Overall improvement: **+19.56%** 
 - Wheelchair detection: +22.85%p 
 The model successfully separated objects that previous detectors failed to distinguish in cluttered hospital scenes
 
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_Table2.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Qualitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS
+</div>
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/sald-net_Table3.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism
+</div>
 
 ---
 
