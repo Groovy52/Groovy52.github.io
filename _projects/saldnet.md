@@ -17,7 +17,7 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 
 ---
 
-## 2. Why This Problem Matters
+## 2. Motivation
 #### 2-1. Why Hospital Detection Is Challenging
 
 <div class="row justify-content-center">
@@ -29,39 +29,25 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
     **Fig 1.** Illustration of challenges in 3D object detection in hospital environments. B**ackground points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations
 </div>
 
-**Hospital environments exhibit unique domain characteristics:**
+**Four key challenges due to unique domain characteristics of hospitals:**
 
-- Frequent overlapping interactions between patients, staff, beds, and wheelchairs
-- Narrow and cluttered corridors causing severe occlusion and partial observations
-- Lack of domain-specific datasets compared to public benchmark datasets such as KITTI and Waymo which focus on outdoor driving scenes
-beds and wheelchairs
-- Strict privacy regulations preventing RGB-based perception → depth-only sensing required 
-
-As a result, models trained on datasets such as KITTI or Waymo are severely affected by **domain shift** when applied to **hospital environments.**
-
----
-
-## 3. Challenges
-
-**Four key challenges were addressed in this SALD-Net:**
-
-#### 3-1. Domain Gap
+**1) Domain Gap**
 The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds and wheelchairs) introduce significant detection difficulty.
 
-#### 3-2. Sensor Noise & Low Resolution
+**2) Sensor Noise & Low Resolution**
 Flash LiDAR data are characterized by outliers and indistinct object boundaries.
 
-#### 3-3. Class Imbalance 
+**3) Class Imbalance**
 Wheelchairs and beds occur far less frequently than people, resulting in skewed training distributions.
 
-#### 3-4. Occlusion & Overlapping Objects
+**4) Occlusion & Overlapping Objects**
 Dense multi-object motion due to move assistance makes instance separation highly challenging.
 
 ---
 
-## 4. Method
+## 3. Proposed Approach
 
-#### 4.1 Self-Attention-Based Detection Architecture
+#### 3.1 Self-Attention-Based Detection Architecture
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -78,7 +64,7 @@ SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored f
 - **Stage 1**: Initial 3D proposal generation via PointNet++ backbone
 - **Stage 2**: Proposal refinement using a Unified Regional and Grid (URG) RoI pooling head
 
-**4-1-1. Backbone-integrated self-attention mechanism (BAM)**  
+**3-1-1. Backbone-integrated self-attention mechanism (BAM)**  
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -100,7 +86,7 @@ This allows each local region to adaptively gather global structural cues withou
 - Geometry-aware context modeling
 - Lightweight compared to full transformers
 
-**4-1-2. Unified Regional and Grid (URG) RoI Pooling head**
+**3-1-2. Unified Regional and Grid (URG) RoI Pooling head**
 
 Indoor medical objects (beds, wheelchairs, AMRs):
 - vary greatly in scale,
@@ -113,7 +99,7 @@ URG combines:
 
 This hybrid pooling preserves both external context and internal geometry for robust detection.
 
-**4-1-3. RoI feature-based self-attention mechanism (RAM)**
+**3-1-3. RoI feature-based self-attention mechanism (RAM)**
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -136,9 +122,9 @@ F_{\text{agg}} = \sum_{i=1}^{N} \text{Softmax}(\text{Attention map}^{(i)}) \odot
 
 ---
 
-## 5. Implementation Details
+## 4. Implementation Details
 
-#### 5-1. Data Acquisition
+#### 4-1. Data Acquisition
 
 The dataset was collected specifically for this study.
 Due to hospital privacy regulations, it cannot be publicly released.
@@ -165,7 +151,7 @@ These locations were deliberately selected to ensure:
 
 This multi-zone configuration enabled the dataset to capture heterogeneous clinical workflows and dynamic object interactions, producing a representative benchmark for hospital navigation systems.
 
-#### 5-2. Data Preprocessing and Augmentation Process
+#### 4-2. Data Preprocessing and Augmentation Process
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -205,7 +191,7 @@ For horizontal positioning, inserted objects are placed beyond the largest exist
 If existing objects are located along the positive x-axis, new objects are placed further along the y-axis, and vice versa.
 Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0), ensuring consistent spatial scaling across the dataset.
 
-#### 5-3. Software
+#### 4-3. Software
 
 **Framework**
 - The proposed network and all comparative models were implemented using PyTorch 1.9.1.
@@ -232,7 +218,7 @@ Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0
   
 ---
 
-## 6. Results
+## 5. Results
 
 SALD-Net significantly outperformed the baseline Part-A2 detector:
 
@@ -273,7 +259,7 @@ work modules. AUG: Applying data augmentation for the training set, BAM: backbon
 
 ---
 
-## 7. Technical Takeaways
+## 6. Technical Takeaways
 
 This work demonstrates that:
 
@@ -283,7 +269,7 @@ This work demonstrates that:
 
 ---
 
-## 8. Future Work
+## 7. Future Work
 
 Future extensions include:
 
