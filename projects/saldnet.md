@@ -2,7 +2,7 @@
 layout: page
 title: SALD-Net
 description: Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment
-img: assets/img/sald-net_fig2.png
+img: /images/projects/sald-net/sald-net_fig2.png
 importance: 3
 category: work
 ---
@@ -22,11 +22,11 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 
 <div class="row justify-content-center">
     <div class="col-sm-8 col-md-6 mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig1.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig1.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    **Fig 1.** Illustration of challenges in 3D object detection in hospital environments. B**ackground points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations
+    **Fig 1.** Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations
 </div>
 
 **Four key challenges due to unique domain characteristics of hospitals:**
@@ -35,7 +35,7 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds and wheelchairs) introduce significant detection difficulty.
 
 **2) Sensor Noise & Low Resolution**
-Flash LiDAR data are characterized by outliers and indistinct object boundaries.
+Flash LiDAR data are typically characterized by increased outliers and blurred object boundaries.
 
 **3) Class Imbalance**
 Wheelchairs and beds occur far less frequently than people, resulting in skewed training distributions.
@@ -51,7 +51,7 @@ Dense multi-object motion due to move assistance makes instance separation highl
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig2.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img//images/projects/sald-net/sald-net_fig2.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -68,11 +68,11 @@ SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored f
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig3.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig3.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-     Fig 2. Architecture details of the backbone-integrated self-attention
+     Fig 3. Architecture details of the backbone-integrated self-attention
 mechanism (BAM)
 </div>
 
@@ -97,17 +97,16 @@ URG combines:
 - **Regional RoI pooling** → captures surrounding context
 - **Hierarchical grid pooling** → extracts multi-scale internal structure
 
-This hybrid pooling preserves both external context and internal geometry for robust detection.
-
+This hybrid pooling strategy preserves both contextual surroundings and internal geometric structures, enabling robust detection under occlusion.
 **3-1-3. RoI feature-based self-attention mechanism (RAM)**
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig4.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig4.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-     Architecture details of the RoI feature-based self-attention
+     Fig 4. Architecture details of the RoI feature-based self-attention
 mechanism (RAM)
 </div>
 
@@ -142,7 +141,7 @@ Each captured point cloud had a spatial resolution of 320 × 240 voxels with a s
 
 **Sensor Deployment in a Hospital Environment**
 
-A total of 19 LiDAR sensors were installed in fixed positions across four representative hospital zones: Radiology Department, Laboratory Medicine, Inpatient Ward A, and Inpatient Ward B
+A total of 19 LiDAR sensors were installed in fixed positions across four representative hospital zones: Radiology Department, Laboratory Medicine, Inpatient Ward A, and Inpatient Ward B.
 
 These locations were deliberately selected to ensure:
 - spatial diversity of indoor geometries
@@ -155,7 +154,7 @@ This multi-zone configuration enabled the dataset to capture heterogeneous clini
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig5.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig5.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -224,37 +223,36 @@ SALD-Net significantly outperformed the baseline Part-A2 detector:
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_fig6.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig6.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    Qualitative comparison of 3D object detection results from baseline methods and SALD-Net on the test set. Background points are shown in black, and object points are color-coded by class. Top down BEV images provide overall scene context, while zoomed-in 3D RoIs highlight mispredicted objects. Detection errors—misclassified, missed, or over-detected—are indicated by arrows. Ground-truth and predicted objects are shown in red and aqua-blue bounding boxes, respectively
+    Fig 6. Qualitative comparison of 3D object detection results from baseline methods and SALD-Net on the test set. Background points are shown in black, and object points are color-coded by class. Top down BEV images provide overall scene context, while zoomed-in 3D RoIs highlight mispredicted objects. Detection errors—misclassified, missed, or over-detected—are indicated by arrows. Ground-truth and predicted objects are shown in red and aqua-blue bounding boxes, respectively
 </div>
 
 
 - **3D mAP: 89.08%** 
 - Overall improvement: **+19.56%** 
 - Wheelchair detection: +22.85%p 
-The model successfully separated objects that previous detectors failed to distinguish in cluttered hospital scenes
+The model successfully separated tightly clustered objects that previous detectors failed to distinguish.
 
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_Table2.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_Table2.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    Table 2. Qualitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS
+    Table 2. Quantitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS
 </div>
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/sald-net_Table3.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_Table3.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    Table 3.  Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different net
-work modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism
+    Table 3.  Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism
 </div>
 
 ---
