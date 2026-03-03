@@ -1,12 +1,10 @@
 ---
-layout: page
-title: Unreadable Image Classification
-description: A Radiomics-based Unread Cervical Imaging Classification Algorithm
-importance: 3
-category: work
+layout: default
+title: cervical
+permalink: /projects/cervical/
 ---
 
-## 1. Overview
+# 1. Overview
 
 This study proposes a **radiomics-based pre-screening framework** to automatically identify and exclude unreadable medical images prior to deep learning model training.
 Unlike conventional research that focuses on improving network architectures, this work demonstrates that **input data quality is a primary determinant of AI performance.**
@@ -15,7 +13,7 @@ By filtering diagnostically unreliable images before training, the framework red
 
 ---
 
-## 2. Motivation
+# 2. Motivation
 
 Real-world clinical datasets inevitably contain images degraded by:
 - Motion artifacts
@@ -35,13 +33,13 @@ This perspective aligns with the shift toward **Data-Centric AI**, where dataset
 
 ---
 
-## 3. Proposed Approach
+# 3. Proposed Approach
 
 Fig. 2 illustrates the overall workflow of the proposed method for automatically classifying unreadable cervical images.
 The algorithm evaluates whether an image is diagnostically usable by quantifying brightness, blur, and anatomical positioning.
 All metric values are normalized between **0 (0%) and 1 (100%)** using the full distribution of readable-image data.
 
-#### 3-1. Classification Indicators
+## 3-1. Classification Indicators
 
 Subtle morphological variations in cervical epithelial cells significantly influence diagnostic interpretation.
 Therefore, pixel-level image quality differences can directly affect readability.
@@ -74,7 +72,7 @@ Examples of unreadable cases identified using these criteria are presented in Fi
 - blurred images,
 - images where the cervical region is improperly captured.
 
-#### 3-2. Classification Procedure
+## 3-2. Classification Procedure
 
 The full decision process is depicted in **Fig. 4** and proceeds as follows:
 
@@ -102,9 +100,9 @@ Within the normalized classification standard:
 
 ---
 
-## 4. Implementation Details
+# 4. Implementation Details
 
-#### 4-1. Data Acquisition
+## 4-1. Data Acquisition
 
 A total of 2,257 cervical images were collected using a cervical imaging diagnostic device (Dr. Cervicam, NTL Healthcare).
 - The study protocol was approved by the Institutional Review Board (IRB No. EUMC 2015-10-004), and all data were fully anonymized prior to analysis.
@@ -123,7 +121,7 @@ For this study:
 
 All images were stored as **24-bit JPG files** and resized to **256 × 256 pixels** before model processing.
 
-#### 4-2. Data Preprocessing and Augmentation Process
+## 4-2. Data Preprocessing and Augmentation Process
 Unreadable images in the collected dataset were initially labeled by clinical experts due to issues such as abnormal brightness, reflections, or other visual defects that prevented cervical identification.
 
 **Resolution and Aspect Ratio Normalization**
@@ -147,7 +145,7 @@ The diagnostically important cervical os was not always located at the image cen
 - The main anatomical region was spatially normalized,
 - Feature calculations reflected anatomical characteristics rather than positional bias.
 
-#### 4-2. Software
+## 4-3. Software
 
 **Framework**
 - The proposed network and all comparative models were implemented using TensorFlow/Keras, which was the most widely used framework for transfer learning with ResNet50 in medical imaging research.
@@ -165,7 +163,7 @@ The diagnostically important cervical os was not always located at the image cen
   
 ---
 
-## 5. Results
+# 5. Results
 
 The proposed filtering algorithm significantly improved the overall classification performance by removing unreadable images before model training.
 
@@ -184,19 +182,19 @@ The difference between the two ROC curves was statistically significant (t-test,
 
 ---
 
-## 6. Technical Takeaways
+# 6. Technical Takeaways
 
 This work demonstrates that:
-#### 6-1. Data-Centric AI Can Rival Model-Centric Improvements
+## 6-1. Data-Centric AI Can Rival Model-Centric Improvements
 Performance gains were achieved without changing the backbone network, emphasizing that dataset reliability is a first-order factor in AI success.
 
-#### 6-2. Image Readability Can Be Quantified
+## 6-2. Image Readability Can Be Quantified
 Radiomics enables translation of subjective clinical judgments into:
 - Reproducible numerical metrics
 - Automated dataset validation
 - Scalable quality control pipelines
 
-#### 6-3. Practical Deployment Value
+## 6-3. Practical Deployment Value
 
 This framework is immediately applicable to:
 - Pre-training dataset validation
@@ -205,16 +203,16 @@ This framework is immediately applicable to:
 
 ---
 
-## 7. Future Work
+# 7. Future Work
 
-#### 7-1. Quality-Aware Training (Soft Weighting Instead of Hard Filtering)
+## 7-1. Quality-Aware Training (Soft Weighting Instead of Hard Filtering)
 Incorporate readability scores directly into loss weighting.
 
-#### 7-2. Artifact Localization Models
+## 7-2. Artifact Localization Models
 Move from detecting whether an image is degraded to where degradation occurs.
 
-#### 7-3. Automated Data-Curation Pipelines
+## 7-3. Automated Data-Curation Pipelines
 Continuous dataset refinement during model lifecycle (active data governance).
 
-#### 7-4. Multi-Modality Extension
+## 7-4. Multi-Modality Extension
 Apply the framework to CT, MRI, ultrasound, and CBCT environments.
