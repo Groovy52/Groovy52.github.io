@@ -22,7 +22,7 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 </p>
 <p align="center"><em>Figure 1. Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations</em></p>
 
-**Four key challenges due to unique domain characteristics of hospitals:**
+#### Four key challenges due to unique domain characteristics of hospitals:
 
 **1) Domain Gap**
 The lack of domain-specific datasets and the presence of occluded or specialized objects (e.g., beds and wheelchairs) introduce significant detection difficulty.
@@ -43,10 +43,9 @@ Dense multi-object motion due to move assistance makes instance separation highl
 ## 3.1 Self-Attention-Based Detection Architecture
 
 <p align="center">
-  <img src="/images/projects/sald-net/sald-net_fig2.png" style="max-width:100%;>
+  <img src="/images/projects/sald-net/sald-net_fig2.png" style="max-width:100%;">
 </p>
-<p align="center"><em>Figure 2. The architecture of SALD-Net. The backbone extracts features
-via backbone-integrated self-attention mechanism (BAM). Foreground segmentation generates initial 3D box proposals, which are refined by the unified regional and grid (URG) RoI pooling head, enhanced with RoI feature-based self-attention mechanism (RAM). Fully connected (FC) layers output final confidence scores and bounding boxes</em></p>
+<p align="center"><em>Figure 2. The architecture of SALD-Net. The backbone extracts features via backbone-integrated self-attention mechanism (BAM). Foreground segmentation generates initial 3D box proposals, which are refined by the unified regional and grid (URG) RoI pooling head, enhanced with RoI feature-based self-attention mechanism (RAM). Fully connected (FC) layers output final confidence scores and bounding boxes</em></p>
 
 SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored for **flash-LiDAR indoor environments**, where point clouds are sparse, low-resolution, and frequently occluded.
 
