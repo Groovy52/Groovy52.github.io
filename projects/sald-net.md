@@ -39,7 +39,7 @@ Dense multi-object motion due to move assistance makes instance separation highl
 
 #### 3.1 Self-Attention-Based Detection Architecture
 
-![**Fig 2.**The architecture of SALD-Net. The backbone extracts features
+![**Fig 2.** The architecture of SALD-Net. The backbone extracts features
 via backbone-integrated self-attention mechanism (BAM). Foreground segmentation generates initial 3D box proposals, which are refined by the unified regional and grid (URG) RoI pooling head, enhanced with RoI feature-based self-attention mechanism (RAM). Fully connected (FC) layers output final confidence scores and bounding boxes](/images/projects/sald-net/sald-net_fig2.png)
 
 SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored for **flash-LiDAR indoor environments**, where point clouds are sparse, low-resolution, and frequently occluded.
@@ -49,7 +49,7 @@ SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored f
 
 **3-1-1. Backbone-integrated self-attention mechanism (BAM)**  
 
-![**Fig 3.**Architecture details of the backbone-integrated self-attention
+![**Fig 3.** Architecture details of the backbone-integrated self-attention
 mechanism (BAM)](/images/projects/sald-net/sald-net_fig3.png)
 
 BAM models long-range relationships between point groups while preserving continuous geometry.
@@ -76,7 +76,7 @@ URG combines:
 This hybrid pooling strategy preserves both contextual surroundings and internal geometric structures, enabling robust detection under occlusion.
 **3-1-3. RoI feature-based self-attention mechanism (RAM)**
 
-![**Fig 4.**Architecture details of the RoI feature-based self-attention
+![**Fig 4.** Architecture details of the RoI feature-based self-attention
 mechanism (RAM)](/images/projects/sald-net/sald-net_fig4.png)
 
 The RoI feature-based self-attention mechanism (RAM) refines the grouped point set from the hierarchical grid RoI pooling by integrating spatial and semantic relationships. 
@@ -121,7 +121,7 @@ This multi-zone configuration enabled the dataset to capture heterogeneous clini
 
 #### 4-2. Data Preprocessing and Augmentation Process
 
-![**Fig 5.**Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class](/images/projects/sald-net/sald-net_fig5.png)
+![**Fig 5.** Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class](/images/projects/sald-net/sald-net_fig5.png)
 
 To stabilize noisy hospital point clouds, a four-stage pipeline was designed:
 - **Voxel-based downsampling for density normalization
@@ -186,16 +186,16 @@ SALD-Net significantly outperformed the baseline Part-A2 detector:
 <p align="center">
   <img src="/images/projects/sald-net/sald-net_fig6.png" style="max-width:100%;">
 </p>
-<p align="center"><em>Fig 6. Qualitative comparison of 3D object detection results from baseline methods and SALD-Net on the test set. Background points are shown in black, and object points are color-coded by class. Top down BEV images provide overall scene context, while zoomed-in 3D RoIs highlight mispredicted objects. Detection errors—misclassified, missed, or over-detected—are indicated by arrows. Ground-truth and predicted objects are shown in red and aqua-blue bounding boxes, respectively</em></p>
+<p align="center"><em>**Fig 6.** Qualitative comparison of 3D object detection results from baseline methods and SALD-Net on the test set. Background points are shown in black, and object points are color-coded by class. Top down BEV images provide overall scene context, while zoomed-in 3D RoIs highlight mispredicted objects. Detection errors—misclassified, missed, or over-detected—are indicated by arrows. Ground-truth and predicted objects are shown in red and aqua-blue bounding boxes, respectively</em></p>
 
 - **3D mAP: 89.08%** 
 - Overall improvement: **+19.56%** 
 - Wheelchair detection: +22.85%p 
 The model successfully separated tightly clustered objects that previous detectors failed to distinguish.
 
-![**Table 2.**Quantitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS](/images/projects/sald-net/sald-net_Table2.png)
+![**Table 2.** Quantitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS](/images/projects/sald-net/sald-net_Table2.png)
 
-![**Table 3.** Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism](/images/projects/sald-net/sald-net_Table1.png)
+![**Table 3.** Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism](/images/projects/sald-net/sald-net_Table3.png)
 
 ---
 
