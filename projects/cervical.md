@@ -35,6 +35,11 @@ This perspective aligns with the shift toward **Data-Centric AI**, where dataset
 
 # 3. Proposed Approach
 
+<p align="center">
+  <img src="/images/projects/cervical/cervical_fig2.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Figure 1. The flowchart illustration of the study method.</em></p>
+
 Fig. 2 illustrates the overall workflow of the proposed method for automatically classifying unreadable cervical images.
 The algorithm evaluates whether an image is diagnostically usable by quantifying brightness, blur, and anatomical positioning.
 All metric values are normalized between **0 (0%) and 1 (100%)** using the full distribution of readable-image data.
@@ -72,9 +77,19 @@ Examples of unreadable cases identified using these criteria are presented in Fi
 - blurred images,
 - images where the cervical region is improperly captured.
 
+<p align="center">
+  <img src="/images/projects/cervical/cervical_fig3.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Figure 2. Examples of Unread Cervical Imaging and Tagged Image, (a) Image of high brightness, (b) Image of low brightness, (c) blurred Image, (d) Image of inappropriately photographed cervical region, (e) Tagged Image of CAM misreading tag into cervical region, (f) Image of CAM reading cervical region right.</em></p>
+
 ## 3-2. Classification Procedure
 
-The full decision process is depicted in **Fig. 4** and proceeds as follows:
+<p align="center">
+  <img src="/images/projects/cervical/cervical_fig4.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Figure 3. The flowchart of Automated classification algorithm for Unread Cervical Imaging.</em></p>
+
+The full decision process is depicted in **Figure. 3** and proceeds as follows:
 
 **1) Input Stage**
 A cervical image is provided to the algorithm.
@@ -136,6 +151,11 @@ To standardize spatial representation:
 Some images contained metadata tags in the lower-right corner.
 These tags could be mistakenly interpreted as anatomical structures by AI models.
 
+<p align="center">
+  <img src="/images/projects/cervical/cervical_fig1.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Figure 4. Network Structure used in analyzing Tag, (a) CNN Structure, (b) CAM Structure.</em></p>
+
 Therefore:
 - Tag regions were removed prior to analysis to prevent false feature learning.
 
@@ -167,10 +187,26 @@ The diagnostically important cervical os was not always located at the image cen
 
 The proposed filtering algorithm significantly improved the overall classification performance by removing unreadable images before model training.
 
+<p align="center">
+  <img src="/images/projects/cervical/cervical_table1.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Table 1. Table of independent sample test results for pixel values in Unread Cervical Imaging and Read Cervical Imaging.</em></p>
+
 - Using the entire dataset (without filtering): Precision 72.64%, Recall 65.04%, F1-score 68.55%, Accuracy 78.88%
 - Using the refined dataset (after applying the proposed algorithm): Precision 91.59%, Recall 93.09%, F1-score 92.31%, Accuracy 91.61%
 
 After filtering, the original 2,000 readable images were further refined to 1,357 high-quality samples, while the unfiltered dataset (1,257 images including unreadable cases) was used as the comparison baseline.
+
+<p align="center">
+  <img src="/images/projects/cervical/cervical_fig5.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Figure 5. Histogram of the image pixel distribution of Read Cervical Imaging and Unread Cervical Imaging, (a) Brightness,
+(b) Blur, (c) Euclidian distance.</em></p>
+
+<p align="center">
+  <img src="/images/projects/cervical/cervical_fig6.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Figure 6. Comparison of image pixel values of Unread Cervical Imaging and Read Cervical Imaging.</em></p>
 
 Receiver Operating Characteristic (ROC) analysis also demonstrated clear performance gains:
 
@@ -179,6 +215,15 @@ Receiver Operating Characteristic (ROC) analysis also demonstrated clear perform
 
 The difference between the two ROC curves was statistically significant (t-test, P < 0.0001), confirming that removing unreadable images leads to substantially improved diagnostic classification performance.
 
+<p align="center">
+  <img src="/images/projects/cervical/cervical_table2.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Table 2. Comparative Table of Performance Evaluation of ResNet-50 according to Exclusion Unread Cervical Imaging Algorithm.</em></p>
+
+<p align="center">
+  <img src="/images/projects/cervical/cervical_fig7.png" style="max-width:100%;">
+</p>
+<p align="center"><em>Figure 7. The results ROC analysis of ResNet-50 according to Exclusion Unread Cervical Imaging Algorithm.</em></p>
 
 ---
 
