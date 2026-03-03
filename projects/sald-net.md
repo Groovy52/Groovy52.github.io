@@ -1,4 +1,4 @@
-<img width="786" height="226" alt="image" src="https://github.com/user-attachments/assets/57580f10-e1f1-430d-bbf1-bbdcc6279b1e" />---
+---
 layout: default
 title: SALD-Net
 permalink: /projects/sald-net/
