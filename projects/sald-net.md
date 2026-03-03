@@ -2,7 +2,7 @@
 layout: page
 title: SALD-Net
 description: Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment
-img: /images/projects/sald-net/sald-net_fig2.png
+img: images/sald-net/sald-net_fig2.png
 importance: 3
 category: work
 ---
@@ -22,7 +22,7 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 
 <div class="row justify-content-center">
     <div class="col-sm-8 col-md-6 mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig1.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_fig1.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -51,7 +51,7 @@ Dense multi-object motion due to move assistance makes instance separation highl
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img//images/projects/sald-net/sald-net_fig2.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_fig2.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -68,7 +68,7 @@ SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored f
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig3.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_fig3.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -102,7 +102,7 @@ This hybrid pooling strategy preserves both contextual surroundings and internal
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig4.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_fig4.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -154,7 +154,7 @@ This multi-zone configuration enabled the dataset to capture heterogeneous clini
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig5.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_fig5.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -223,7 +223,7 @@ SALD-Net significantly outperformed the baseline Part-A2 detector:
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_fig6.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_fig6.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -239,7 +239,7 @@ The model successfully separated tightly clustered objects that previous detecto
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_Table2.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_Table2.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -248,7 +248,7 @@ The model successfully separated tightly clustered objects that previous detecto
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="/images/projects/sald-net/sald-net_Table3.png" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_Table3.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
