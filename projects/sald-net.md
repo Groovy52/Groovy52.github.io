@@ -193,24 +193,9 @@ SALD-Net significantly outperformed the baseline Part-A2 detector:
 - Wheelchair detection: +22.85%p 
 The model successfully separated tightly clustered objects that previous detectors failed to distinguish.
 
+![**Table 2.**Quantitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS](/images/projects/sald-net/sald-net_Table2.png)
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_Table2.png" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Table 2. Quantitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS
-</div>
-
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_Table3.png" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Table 3.  Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism
-</div>
+![**Table 3.** Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism](/images/projects/sald-net/sald-net_Table1.png)
 
 ---
 
