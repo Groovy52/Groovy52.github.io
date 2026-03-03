@@ -165,7 +165,7 @@ For horizontal positioning, inserted objects are placed beyond the largest exist
 If existing objects are located along the positive x-axis, new objects are placed further along the y-axis, and vice versa.
 Finally, scenes are normalized by centering the 3D coordinate system at (0, 0, 0), ensuring consistent spatial scaling across the dataset.
 
-#### 4-3. Software
+## 4-3. Software
 
 **Framework**
 - The proposed network and all comparative models were implemented using PyTorch 1.9.1.
