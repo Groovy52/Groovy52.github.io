@@ -1,4 +1,4 @@
----
+<img width="786" height="226" alt="image" src="https://github.com/user-attachments/assets/57580f10-e1f1-430d-bbf1-bbdcc6279b1e" />---
 layout: default
 title: SALD-Net
 permalink: /projects/sald-net/
@@ -14,13 +14,13 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 
 ---
 
-## 2. Motivation
-#### 2-1. Why Hospital Detection Is Challenging
+# 2. Motivation
+## 2-1. Why Hospital Detection Is Challenging
 
 <p align="center">
-  <img src="/images/projects/sald-net/sald-net_fig1.png" width="600">
+  <img src="/images/projects/sald-net/sald-net_fig1.png" style="max-width:100%;">
 </p>
-<p align="center"><em>Fig 1. Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations</em></p>
+<p align="center"><em>Figure 1. Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations</em></p>
 
 **Four key challenges due to unique domain characteristics of hospitals:**
 
@@ -38,12 +38,12 @@ Dense multi-object motion due to move assistance makes instance separation highl
 
 ---
 
-## 3. Proposed Approach
+# 3. Proposed Approach
 
-#### 3.1 Self-Attention-Based Detection Architecture
+## 3.1 Self-Attention-Based Detection Architecture
 
 <p align="center">
-  <img src="/images/sald-net/sald-net_fig2.png" width="600">
+  <img src="/images/projects/sald-net/sald-net_fig2.png" style="max-width:100%;>
 </p>
 <p align="center"><em>Figure 2. The architecture of SALD-Net. The backbone extracts features
 via backbone-integrated self-attention mechanism (BAM). Foreground segmentation generates initial 3D box proposals, which are refined by the unified regional and grid (URG) RoI pooling head, enhanced with RoI feature-based self-attention mechanism (RAM). Fully connected (FC) layers output final confidence scores and bounding boxes</em></p>
@@ -53,10 +53,10 @@ SALD-Net is designed as a **two-stage end-to-end 3D object detector** tailored f
 - **Stage 1**: Initial 3D proposal generation via PointNet++ backbone
 - **Stage 2**: Proposal refinement using a Unified Regional and Grid (URG) RoI pooling head
 
-**3-1-1. Backbone-integrated self-attention mechanism (BAM)**  
+### 3-1-1. Backbone-integrated self-attention mechanism (BAM)
 
 <p align="center">
-  <img src="/images/projects/sald-net/sald-net_fig3.png" width="600">
+  <img src="/images/projects/sald-net/sald-net_fig3.png" style="max-width:100%;">
 </p>
 <p align="center"><em>Figure 3. Architecture details of the backbone-integrated self-attention mechanism (BAM)</em></p>
 
@@ -70,7 +70,7 @@ This allows each local region to adaptively gather global structural cues withou
 - Geometry-aware context modeling
 - Lightweight compared to full transformers
 
-**3-1-2. Unified Regional and Grid (URG) RoI Pooling head**
+### 3-1-2. Unified Regional and Grid (URG) RoI Pooling head
 
 Indoor medical objects (beds, wheelchairs, AMRs):
 - vary greatly in scale,
@@ -82,10 +82,11 @@ URG combines:
 - **Hierarchical grid pooling** → extracts multi-scale internal structure
 
 This hybrid pooling strategy preserves both contextual surroundings and internal geometric structures, enabling robust detection under occlusion.
-**3-1-3. RoI feature-based self-attention mechanism (RAM)**
+
+### 3-1-3. RoI feature-based self-attention mechanism (RAM)
 
 <p align="center">
-  <img src="/images/projects/sald-net/sald-net_fig4.png" width="600">
+  <img src="/images/projects/sald-net/sald-net_fig4.png" style="max-width:100%;>
 </p>
 <p align="center"><em>Figure 4. Architecture details of the RoI feature-based self-attention mechanism (RAM)</em></p>
 
@@ -100,9 +101,9 @@ F_{\text{agg}} = \sum_{i=1}^{N} \text{Softmax}(\text{Attention map}^{(i)}) \odot
 
 ---
 
-## 4. Implementation Details
+# 4. Implementation Details
 
-#### 4-1. Data Acquisition
+## 4-1. Data Acquisition
 
 The dataset was collected specifically for this study.
 Due to hospital privacy regulations, it cannot be publicly released.
@@ -129,10 +130,10 @@ These locations were deliberately selected to ensure:
 
 This multi-zone configuration enabled the dataset to capture heterogeneous clinical workflows and dynamic object interactions, producing a representative benchmark for hospital navigation systems.
 
-#### 4-2. Data Preprocessing and Augmentation Process
+## 4-2. Data Preprocessing and Augmentation Process
 
 <p align="center">
-  <img src="/images/projects/sald-net/sald-net_fig5.png" width="600">
+  <img src="/images/projects/sald-net/sald-net_fig5.png" style="max-width:100%;>
 </p>
 <p align="center"><em>Figure 5. Preprocessing steps for raw point cloud data. (a) Raw point cloud. (b) Voxel-based downsampling. (c) RANSAC-based filtering; red points indicate filtered wall points. (d) Final denoised point cloud after statistical outlier removal. Background points are shown in black; object points and bounding boxes are color-coded by object class</em></p>
 
@@ -207,14 +208,14 @@ SALD-Net significantly outperformed the baseline Part-A2 detector:
 The model successfully separated tightly clustered objects that previous detectors failed to distinguish.
 
 <p align="center">
-  <img src="/images/projects/sald-net/sald-net_Table2.png" width="600">
+  <img src="/images/projects/sald-net/sald-net_Table2.png" style="max-width:100%;>
 </p>
 <p align="center"><em>Table 2. Quantitative Performance comparison of 3D detection on our test dataset. The evaluation metrics are BEV AP(%), 3D AP(%) with an IoU threshold of 0.5 for robot, person, bed, and wheelchair classes, and inference speed measured in FPS</em></p>
 
 <p align="center">
-  <img src="/images/projects/sald-net/sald-net_Table3.png" width="600">
+  <img src="/images/projects/sald-net/sald-net_Table3.png" style="max-width:100%;>
 </p>
-<p align="center"><em>Table 2. Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism</em></p>
+<p align="center"><em>Table 3. Ablation study results on the test set. Evaluation of the impact of data augmentation and self-attention mechanisms in different network modules. AUG: Applying data augmentation for the training set, BAM: backbone-integrated self-attention mechanism, RAM: RoI feature-based self-attention mechanism</em></p>
 
 ---
 
