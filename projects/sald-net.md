@@ -21,11 +21,7 @@ In this project, **SALD-Net, a self-attention integrated LiDAR-based 3D object d
 ## 2. Motivation
 #### 2-1. Why Hospital Detection Is Challenging
 
-<div class="row justify-content-center">
-    <div class="col-sm-8 col-md-6 mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="images/sald-net/sald-net_fig1.png" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
+<img src="/images/sald-net/sald-net_fig1.png" width="600">
 <div class="caption">
     **Fig 1.** Illustration of challenges in 3D object detection in hospital environments. Background points are shown in black; object points and bounding boxes are color-coded by object class. (a) Occlusion: A person is partially occluded by a bed. (b) Overlap: Adjacent objects exhibit overlapping regions. (c) Combined: Both occlusion and overlap occur simultaneously. (d) Sparsity: Non-uniform sensor density leads to incomplete 3D representations
 </div>
