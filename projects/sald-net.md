@@ -1,11 +1,7 @@
 ---
-layout: page
+layout: default
 title: SALD-Net
 permalink: /projects/sald-net/
-description: Self-attention-integrated LiDAR-based 3D object detection network in a crowded hospital environment
-img: images/sald-net/sald-net_fig2.png
-importance: 3
-category: work
 ---
 
 ## 1. Overview
