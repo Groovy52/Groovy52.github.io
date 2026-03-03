@@ -14,3 +14,7 @@ mathjax: true
 theme: minima
 
 permalink: /:categories/:year/:month/:day/:title.html
+
+collections:
+  projects:
+    output: true
