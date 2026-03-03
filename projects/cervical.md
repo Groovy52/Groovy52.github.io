@@ -204,7 +204,7 @@ After filtering, the original 2,000 readable images were further refined to 1,35
 (b) Blur, (c) Euclidian distance.</em></p>
 
 <p align="center">
-  <img src="/images/projects/cervical/cervical_fig6.png" style="max-width:100%;">
+  <img src="/images/projects/cervical/cervical_fig6.png" style="max-width:60%;">
 </p>
 <p align="center"><em>Figure 6. Comparison of image pixel values of Unread Cervical Imaging and Read Cervical Imaging.</em></p>
 
