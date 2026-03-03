@@ -4,7 +4,7 @@ title: SALD-Net
 permalink: /projects/sald-net/
 ---
 
-## 1. Overview
+# 1. Overview
 
 **Autonomous mobile robots (AMRs) are increasingly deployed in hospitals** to mitigate workforce shortages through supporting tasks such as medication transport and patient guidance.
 
