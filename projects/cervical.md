@@ -78,7 +78,7 @@ Examples of unreadable cases identified using these criteria are presented in Fi
 - images where the cervical region is improperly captured.
 
 <p align="center">
-  <img src="/images/projects/cervical/cervical_fig3.png" style="max-width:100%;">
+  <img src="/images/projects/cervical/cervical_fig3.png" style="max-width:50%;">
 </p>
 <p align="center"><em>Figure 2. Examples of Unread Cervical Imaging and Tagged Image, (a) Image of high brightness, (b) Image of low brightness, (c) blurred Image, (d) Image of inappropriately photographed cervical region, (e) Tagged Image of CAM misreading tag into cervical region, (f) Image of CAM reading cervical region right.</em></p>
 
